@@ -4,3 +4,7 @@ plugins:
   - jekyll-remote-theme
 minima:
   skin: dark
+
+title: Dylan Bretz Jr.
+description: "Dylan Bretz Jr.'s Personal Website"
+github_username: dylanbretzjr
