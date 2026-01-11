@@ -1,0 +1,308 @@
+/* css styles */
+
+/* =========================================
+   1. GLOBAL & TYPOGRAPHY
+   ========================================= */
+
+#quarto-margin-sidebar {
+  color: var(--quarto-body-color) !important;
+}
+
+.category {
+  color: var(--quarto-body-color) !important;
+  opacity: .6 !important;
+}
+
+.category.active,
+.category:hover {
+  opacity: 1 !important;
+}
+
+.quarto-listing-category-title {
+  color: var(--quarto-body-color) !important;
+  opacity: 1 !important;
+}
+
+/* Text Consistency Utilities */
+caption,
+.blockquote,
+.nav-footer {
+  color: var(--quarto-body-color) !important;
+}
+
+#quarto-back-to-top {
+  color: #3b3b3b !important;
+  transition: color 0.2s ease-in-out
+}
+
+.quarto-dark #quarto-back-to-top {
+  color: #b3b3b3 !important;
+}
+
+.quarto-dark #quarto-back-to-top:hover,
+#quarto-back-to-top:hover {
+  color: var(--quarto-body-color) !important;
+}
+
+#quarto-back-to-top {
+  box-shadow:
+    0 .2rem .5rem #b3b3b3,
+    0 0 .05rem #b3b3b3 !important;
+}
+
+.quarto-dark #quarto-back-to-top {
+  box-shadow:
+    0 .2rem .5rem #242424,
+    0 0 .05rem #242424 !important;
+}
+
+caption {
+  font-weight: 700 !important;
+  font-size: var(--bs-body-font-size) !important;
+}
+
+/* Code Blocks (Dark Mode Override) */
+.quarto-dark code {
+  color: #ffffff !important;
+  background-color: #242424 !important;
+}
+
+/* Footer Border (Dark Mode Override) */
+.quarto-dark .nav-footer {
+  border-color: #242424 !important;
+}
+
+/* =========================================
+   2. NAVBAR STYLING
+   ========================================= */
+
+.navbar {
+  background-color: var(--quarto-body-bg) !important;
+  color: var(--quarto-body-color) !important;
+  border-bottom: 1px solid var(--quarto-body-color);
+  border-color: var(--quarto-border-color) !important;
+}
+
+/* Dark Mode Border Override for Navbar */
+.quarto-dark .navbar {
+  border-color: #242424 !important;
+}
+
+.navbar .navbar-brand {
+  color: var(--quarto-body-color) !important;
+  font-weight: 700 !important;
+}
+
+.navbar svg {
+  fill: var(--quarto-body-color) !important;
+  stroke: var(--quarto-body-color) !important;
+}
+
+/* 1. Base State: Set opacity ONLY on the link wrapper */
+.navbar .nav-link {
+  color: var(--quarto-body-color) !important;
+  opacity: 0.6 !important; /* The icon inside will naturally match this */
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+
+/* 3. Hover State: Change the link wrapper to 1 */
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  opacity: 1 !important;
+  transform: translateY(-2px);
+}
+
+/* Nav Link Spacing & Alignment */
+.navbar-nav .nav-link:not(:has(i)) {
+  min-width: 90px;
+  text-align: center;
+}
+
+/* Active State */
+.navbar-nav .nav-link.active {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* Mobile Menu Toggles */
+/* Light: Invert to black */
+body.quarto-light .navbar-toggler-icon {
+  filter: invert(1) grayscale(100%) brightness(0);
+}
+body.quarto-light .quarto-color-scheme-toggle .bi {
+  filter: invert(1) grayscale(100%) contrast(100%);
+}
+/* Dark: Keep white */
+body.quarto-dark .navbar-toggler-icon,
+body.quarto-dark .quarto-color-scheme-toggle .bi {
+  filter: none;
+}
+
+/* =========================================
+   3. SIDEBAR & TOC
+   ========================================= */
+
+/* Light Mode (Default) is handled by Quarto variables */
+
+/* Dark Mode TOC Colors */
+.quarto-dark #quarto-back-to-top,
+.quarto-dark #TOC a {
+  color: #b3b3b3 !important;
+}
+
+/* Dark Mode TOC Lines */
+.quarto-dark #TOC a {
+  border-left-color: #b3b3b3 !important;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover State */
+.quarto-dark #TOC a:hover {
+  color: #ffffff !important;
+}
+
+/* Active State (Text & Line) */
+.quarto-dark #TOC a.active {
+  color: #ffffff !important;
+}
+.quarto-dark #TOC .nav-link.active {
+  border-left-color: #ffffff !important;
+}
+
+/* =========================================
+   4. CONTENT LINKS (Body Text)
+   ========================================= */
+
+/* Light Mode */
+.anchorjs-link {
+  color: rgba(var(--bs-link-color-rgb)) !important;
+  opacity: 0 !important;
+}
+
+#quarto-document-content p a,
+#quarto-document-content ul a,
+#quarto-document-content ol a,
+.footer a,
+.anchored:hover .anchorjs-link {
+  color: rgba(var(--bs-link-color-rgb)) !important;
+  opacity: 1 !important;
+}
+
+#quarto-document-content p a:hover,
+#quarto-document-content ul a:hover,
+#quarto-document-content ol a:hover,
+.footer a:hover,
+.anchored:hover .anchorjs-link:hover {
+  color: rgba(var(--bs-link-hover-color-rgb)) !important;
+}
+
+/* Dark Mode */
+.quarto-dark .anchorjs-link {
+  color: var(--quarto-body-color) !important;
+  opacity: 0 !important;
+}
+
+.quarto-dark #quarto-document-content p a,
+.quarto-dark #quarto-document-content ul a,
+.quarto-dark #quarto-document-content ol a,
+.quarto-dark .footer a,
+.quarto-dark .anchored:hover .anchorjs-link {
+  color: var(--quarto-body-color) !important;
+  opacity: .6 !important;
+}
+
+.quarto-dark #quarto-document-content p a:hover,
+.quarto-dark #quarto-document-content ul a:hover,
+.quarto-dark #quarto-document-content ol a:hover,
+.quarto-dark .footer a:hover,
+.quarto-dark .anchored:hover .anchorjs-link:hover {
+  color: var(--quarto-body-color) !important;
+  opacity: 1 !important;
+}
+
+/* =========================================
+   5. COMPONENTS (Buttons & Categories)
+   ========================================= */
+
+/* Listing Category Spacing */
+.listing-categories {
+  margin-top: 5px !important;
+}
+
+/* Buttons, About Links, and Listing Categories */
+.about-link,
+div.quarto-post .listing-categories .listing-category,
+div.quarto-title .quarto-categories .quarto-category,
+body.quarto-dark .about-link,
+body.quarto-dark div.quarto-post .listing-categories .listing-category,
+body.quarto-dark div.quarto-title .quarto-categories .quarto-category,
+#quarto-document-content a.btn,
+.quarto-dark #quarto-document-content a.btn {
+  border-radius: 6px;
+  text-decoration: none !important;
+  color: var(--quarto-body-color) !important;
+  border-color: var(--quarto-body-color) !important;
+  opacity: .6 !important;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* Button Hover Effects */
+.about-link:hover,
+div.quarto-post .listing-categories .listing-category:hover,
+div.quarto-title .quarto-categories .quarto-category:hover,
+body.quarto-dark .about-link:hover,
+body.quarto-dark div.quarto-post .listing-categories .listing-category:hover,
+body.quarto-dark div.quarto-title .quarto-categories .quarto-category:hover,
+#quarto-document-content a.btn:hover,
+.quarto-dark #quarto-document-content a.btn:hover {
+  color: var(--quarto-body-color) !important;
+  border-color: var(--quarto-body-color) !important;
+  opacity: 1 !important;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   MOBILE SOCIAL ICONS FIX
+   ========================================= */
+
+@media (max-width: 991.98px) {
+  
+  /* 1. Target the container holding the social icons.
+     Quarto usually places the 'right' items in the last navbar-nav list. */
+  .navbar-collapse .navbar-nav:last-of-type {
+    flex-direction: row !important;    /* Force them side-by-side */
+    justify-content: center !important; /* Center the whole group */
+    gap: 1.5rem;                       /* Add space between the icons */
+    margin-top: 10px;                  /* Add some space above the icons */
+    margin-bottom: 20px;               /* Add some space below (optional) */
+  }
+
+  /* 2. Ensure the text links (Home, Projects) stay centered vertically */
+  .navbar-collapse .navbar-nav:first-of-type {
+    align-items: center !important;
+  }
+}
+
+
+
+
+
+
+
+
+.sidebar nav[role="doc-toc"] ul > li > a {
+  border-left: 2px solid #e9ecef !important;
+}
+
+.sidebar nav[role="doc-toc"] ul > li > a.active {
+  border-left: 2px solid #2780e3 !important;
+}
+
+.sidebar nav[role="doc-toc"] ul > li > a.active {
+  font-weight: bold !important;
+}
+
+#toc-title {
+  font-weight: bold !important;
+}
