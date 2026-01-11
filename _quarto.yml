@@ -31,7 +31,7 @@ website:
   page-footer:
     border: true
     left: |
-      Powered by [Quarto](https://quarto.org).
+      Powered by [{{< iconify simple-icons:quarto title="Quarto Logo" label="Quarto Logo" >}} Quarto](https://quarto.org).
     center: |
       Copyright © 2026 Dylan Bretz Jr.
     right: |
