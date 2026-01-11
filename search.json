@@ -1,5 +1,19 @@
 [
   {
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Contact",
+    "section": "",
+    "text": "Thank you for visiting my site :)\nFeel free to send me a message if you’d like to connect!\nFeel free to send a message to dylanbretzjr@gmail.com or contact me via LinkedIn.\n\n\n Back to top"
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "A collection of completed projects and case studies.\n\n\n\n\n\nNo matching items\n\n\n\n\n\n Back to top"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Dylan Bretz Jr.",
@@ -26,19 +40,5 @@
     "title": "Dylan Bretz Jr.",
     "section": "",
     "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
-  },
-  {
-    "objectID": "contact.html",
-    "href": "contact.html",
-    "title": "Contact",
-    "section": "",
-    "text": "Thank you for visiting my site :)\nFeel free to send me a message if you’d like to connect!\nFeel free to send a message to dylanbretzjr@gmail.com or contact me via LinkedIn.\n\n\n Back to top"
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "A collection of completed projects and case studies.\n\n\n\n\n\nNo matching items\n\n\n\n\n\n Back to top"
   }
 ]
