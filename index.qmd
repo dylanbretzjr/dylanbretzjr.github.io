@@ -1,11 +1,35 @@
 ---
-title: "dylanbretzjr.github.io"
+title: "Dylan Bretz Jr."
+subtitle: "Musician → Data Analyst"
+about:
+  template: trestles
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      url: https://www.linkedin.com/in/dylan-bretz-b74311153/
+    - icon: github
+      text: GitHub
+      url: https://github.com/dylanbretzjr
+    - icon: email
+      text: Email
+      url: mailto:dylanbretzjr@gmail.com
+image: /img/portrait.jpg
 ---
 
-This is a Quarto website.
+# 🚧 This site is under construction 🚧
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+Please come back soon to see what's built!
 
-```{r}
-1 + 1
-```
+## Bio
+
+I'm a musician, problem solver, and lifelong learner transitioning to data analytics.
+
+{{< lipsum 2 >}}
+
+## Education
+
+{{< lipsum 1 >}}
+
+## Personal life
+
+{{< lipsum 1 >}}

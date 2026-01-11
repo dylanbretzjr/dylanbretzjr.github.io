@@ -1,0 +1,21 @@
+---
+title: "Contact"
+about:
+  template: solana
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      url: https://www.linkedin.com/in/dylan-bretz-b74311153/
+    - icon: github
+      text: GitHub
+      url: https://github.com/dylanbretzjr
+    - icon: email
+      text: Email
+      url: mailto:dylanbretzjr@gmail.com
+---
+
+Thank you for visiting my site :)
+
+Feel free to send me a message if you'd like to connect!
+
+Feel free to send a message to <a href = "mailto: dylanbretzjr@gmail.com">dylanbretzjr@gmail.com</a> or contact me via [LinkedIn](https://www.linkedin.com/in/dylan-bretz-b74311153/).

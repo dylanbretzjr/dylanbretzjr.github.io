@@ -1,0 +1,22 @@
+---
+title: "Projects"
+listing:
+  id: project-listing
+  type: default
+  fields: [title, author, description, date, image, reading-time, categories]
+  categories: true
+  contents:
+  - '*.qmd'
+  sort: date desc
+  filter-ui: false
+  sort-ui: false
+  #feed: true
+page-layout: full
+---
+
+A collection of completed projects and case studies.
+
+---
+
+::: {#project-listing}
+:::

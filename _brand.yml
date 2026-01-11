@@ -1,0 +1,17 @@
+color:
+  background:
+    light: "#ffffff"
+    dark: "#1E1E1E"
+  foreground:
+    light: "#000000"
+    dark: "#ffffff"
+
+typography:
+  fonts:
+    - family: Inclusive Sans
+      source: google
+    - family: Space Mono
+      source: google
+  base: Inclusive Sans
+  headings: Inclusive Sans
+  monospace: Space Mono

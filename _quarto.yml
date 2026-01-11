@@ -1,21 +1,66 @@
 project:
   type: website
+  output-dir: docs
+  resources:
+    - CNAME
 
 website:
-  title: "dylanbretzjr.github.io"
+  #site-url: "https://www.dylanbretzjr.com"
+  title: "Dylan Bretz Jr."
+  description: "Dylan Bretz Jr. is a musician and growing data professional dedicated to critical thinking and lifelong learning."
+  favicon: /img/logo.svg
+  image: /img/portrait.jpg
   navbar:
+    search: true
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: projects/index.qmd
+        text: Projects
+      - href: https://docs.google.com/document/d/e/2PACX-1vRAPxM0I4u_5OEYcn9zzhkxiM-7RCJyFQUNOlqXw0qTFCNofu5yxJ2OIq2L44krB5LJjqXgAu4_gFSX/pub
+        text: Resume
+      - href: contact.qmd
+        text: Contact
+    right:
+      - icon: linkedin
+        url: https://www.linkedin.com/in/dylan-bretz-b74311153/
+      - icon: github
+        url: https://github.com/dylanbretzjr
+      - icon: envelope
+        url: mailto:dylanbretzjr@gmail.com
+  page-footer:
+    border: true
+    left: |
+      Powered by [Quarto](https://quarto.org).
+    center: |
+      Copyright © 2026 Dylan Bretz Jr.
+    right: |
+      License: [CC BY NC SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0).
+  twitter-card: true
+  open-graph: true
+  back-to-top-navigation: true
+  #repo-url: https://github.com/dylanbretzjr/dylanbretzjr.github.io
+  #repo-actions: [edit, source, issue]
+  #bread-crumbs: true
 
 format:
   html:
+    date-format: "YYYY-MM-DD"
+    lang: en-US
+    respect-user-color-scheme: true
     theme:
-      - cosmo
-      - brand
+      light:
+        - cosmo
+        - brand
+      dark:
+        - cosmo
+        - brand
     css: styles.css
+    fontsize: 20px
     toc: true
-
-
-
+    toc-title: "Table of Contents"
+    toc-depth: 3
+    toc-expand: 3
+    fig-align: center
+    smooth-scroll: true
+    code-overflow: scroll

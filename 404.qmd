@@ -1,0 +1,35 @@
+---
+pagetitle: "Page not found"
+permalink: /404.html
+---
+
+::: {.column-screen-inset .text-center}
+
+<p class="fw-bold" style="font-size: 10rem;">404</p>
+
+# Oops! The page you're looking for isn't here.
+
+<br>
+
+::: {style="font-size: 1.25rem;"}
+It may have been renamed or removed.
+
+Try using the **search icon** in the navigation bar to find what you're looking for.
+:::
+
+<br>
+
+<div>
+<a href="#" onclick="history.back(); return false;" 
+   class="btn btn-lg me-2" 
+   role="button">
+   Go Back
+</a>
+<a href="/" 
+   class="btn btn-lg" 
+   role="button">
+   Return Home
+</a>
+</div>
+
+:::
