@@ -9,8 +9,7 @@ about:
     - icon: github
       text: GitHub
       url: https://github.com/dylanbretzjr
-    - icon: email
-      text: Email
+    - text: "{{< fa envelope >}} Email"
       url: mailto:dylanbretzjr@gmail.com
 ---
 

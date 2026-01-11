@@ -26,7 +26,7 @@ website:
         url: https://www.linkedin.com/in/dylan-bretz-b74311153/
       - icon: github
         url: https://github.com/dylanbretzjr
-      - icon: envelope
+      - text: "{{< fa envelope >}}"
         url: mailto:dylanbretzjr@gmail.com
   page-footer:
     border: true
