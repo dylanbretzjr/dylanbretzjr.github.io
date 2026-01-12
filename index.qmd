@@ -13,6 +13,10 @@ about:
     - text: "{{< fa envelope >}} Email"
       url: mailto:dylanbretzjr@gmail.com
 image: /img/portrait.jpg
+format:
+  html:
+    grid:
+      body-width: 1000px
 ---
 
 # 🚧 This site is under construction 🚧
