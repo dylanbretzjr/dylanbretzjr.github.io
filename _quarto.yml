@@ -62,3 +62,5 @@ format:
     fig-align: center
     smooth-scroll: true
     code-overflow: scroll
+    grid:
+      margin-width: 300px
