@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Dylan Bretz Jr.">
+<meta name="dcterms.date" content="2026-01-19">
+
+<title>Cyclistic Bike-Share Data Analysis with Python Case Study – Dylan Bretz Jr.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../..//img/logo.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-6ebf1c17ee52d4a41d24e1b861b6ca7f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9f790322540bfaeee81c3744168ecf0e.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-6ebf1c17ee52d4a41d24e1b861b6ca7f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6c1dfd964c87d51a04553e843f3b1bbb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-e34e31f47021e1da25b9e1274e957bd9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-6c1dfd964c87d51a04553e843f3b1bbb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/iconify-3.0.0/iconify-icon.min.js"></script>
+<link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Cyclistic Bike-Share Data Analysis with Python Case Study – Dylan Bretz Jr.">
+<meta property="og:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
+<meta property="og:image" content="https://dylanbretzjr.com/projects/cyclistic-case-study/cyclistic_logo.png">
+<meta property="og:site_name" content="Dylan Bretz Jr.">
+<meta property="og:image:height" content="1244">
+<meta property="og:image:width" content="1400">
+<meta name="twitter:title" content="Cyclistic Bike-Share Data Analysis with Python Case Study – Dylan Bretz Jr.">
+<meta name="twitter:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
+<meta name="twitter:image" content="https://dylanbretzjr.com/projects/cyclistic-case-study/cyclistic_logo.png">
+<meta name="twitter:image-height" content="1244">
+<meta name="twitter:image-width" content="1400">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const queryPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkModeDefault = queryPrefersDark.matches;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    queryPrefersDark.addEventListener("change", e => {
+      if(window.localStorage.getItem("quarto-color-scheme") !== null)
+        return;
+      const alternate = e.matches
+      toggleColorMode(alternate);
+      localAlternateSentinel = e.matches ? 'alternate' : 'default'; // this is used alongside local storage!
+      toggleGiscusIfUsed(alternate, darkModeDefault);
+    });
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Dylan Bretz Jr.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://docs.google.com/document/d/e/2PACX-1vRAPxM0I4u_5OEYcn9zzhkxiM-7RCJyFQUNOlqXw0qTFCNofu5yxJ2OIq2L44krB5LJjqXgAu4_gFSX/pub"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../contact.html"> 
+<span class="menu-text">Contact</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/dylan-bretz-b74311153/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/dylanbretzjr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="mailto:dylanbretzjr@gmail.com"> 
+<span class="menu-text"><i class="fa-solid fa-envelope" aria-label="envelope"></i></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">Background</a>
+  <ul class="collapse">
+  <li><a href="#goal" id="toc-goal" class="nav-link" data-scroll-target="#goal">Goal</a></li>
+  <li><a href="#business-task" id="toc-business-task" class="nav-link" data-scroll-target="#business-task">Business Task</a></li>
+  </ul></li>
+  <li><a href="#data-source" id="toc-data-source" class="nav-link" data-scroll-target="#data-source">Data Source</a>
+  <ul class="collapse">
+  <li><a href="#data-integrity" id="toc-data-integrity" class="nav-link" data-scroll-target="#data-integrity">Data Integrity</a></li>
+  </ul></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a>
+  <ul class="collapse">
+  <li><a href="#tools" id="toc-tools" class="nav-link" data-scroll-target="#tools">Tools</a></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">Workflow</a></li>
+  </ul></li>
+  <li><a href="#data-cleaning-and-preparation" id="toc-data-cleaning-and-preparation" class="nav-link" data-scroll-target="#data-cleaning-and-preparation">Data Cleaning and Preparation</a>
+  <ul class="collapse">
+  <li><a href="#initial-cleaning" id="toc-initial-cleaning" class="nav-link" data-scroll-target="#initial-cleaning">Initial Cleaning</a>
+  <ul class="collapse">
+  <li><a href="#check-duplicates" id="toc-check-duplicates" class="nav-link" data-scroll-target="#check-duplicates">Check Duplicates</a></li>
+  <li><a href="#drop-station-id-fields" id="toc-drop-station-id-fields" class="nav-link" data-scroll-target="#drop-station-id-fields">Drop Station ID Fields</a></li>
+  <li><a href="#convert-timestamps-to-datetime" id="toc-convert-timestamps-to-datetime" class="nav-link" data-scroll-target="#convert-timestamps-to-datetime">Convert Timestamps to Datetime</a></li>
+  </ul></li>
+  <li><a href="#handling-missing-values" id="toc-handling-missing-values" class="nav-link" data-scroll-target="#handling-missing-values">Handling Missing Values</a>
+  <ul class="collapse">
+  <li><a href="#drop-rides-missing-end-coordinates" id="toc-drop-rides-missing-end-coordinates" class="nav-link" data-scroll-target="#drop-rides-missing-end-coordinates">Drop Rides Missing End Coordinates</a></li>
+  <li><a href="#fill-missing-station-names" id="toc-fill-missing-station-names" class="nav-link" data-scroll-target="#fill-missing-station-names">Fill Missing Station Names</a></li>
+  </ul></li>
+  <li><a href="#validate-timeframe" id="toc-validate-timeframe" class="nav-link" data-scroll-target="#validate-timeframe">Validate Timeframe</a></li>
+  </ul></li>
+  <li><a href="#data-transformation-and-validation" id="toc-data-transformation-and-validation" class="nav-link" data-scroll-target="#data-transformation-and-validation">Data Transformation and Validation</a>
+  <ul class="collapse">
+  <li><a href="#drop-rides-affected-by-dst" id="toc-drop-rides-affected-by-dst" class="nav-link" data-scroll-target="#drop-rides-affected-by-dst">Drop Rides Affected by DST</a></li>
+  <li><a href="#drop-ride-duration-outliers" id="toc-drop-ride-duration-outliers" class="nav-link" data-scroll-target="#drop-ride-duration-outliers">Drop Ride Duration Outliers</a></li>
+  <li><a href="#cleaning-summary" id="toc-cleaning-summary" class="nav-link" data-scroll-target="#cleaning-summary">Cleaning Summary</a></li>
+  <li><a href="#export-cleaned-dataset" id="toc-export-cleaned-dataset" class="nav-link" data-scroll-target="#export-cleaned-dataset">Export Cleaned Dataset</a></li>
+  </ul></li>
+  <li><a href="#data-analysis" id="toc-data-analysis" class="nav-link" data-scroll-target="#data-analysis">Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#summary-tables" id="toc-summary-tables" class="nav-link" data-scroll-target="#summary-tables">Summary Tables</a></li>
+  <li><a href="#pivot-tables" id="toc-pivot-tables" class="nav-link" data-scroll-target="#pivot-tables">Pivot Tables</a></li>
+  </ul></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization">Data Visualization</a>
+  <ul class="collapse">
+  <li><a href="#key-insights" id="toc-key-insights" class="nav-link" data-scroll-target="#key-insights">Key Insights</a>
+  <ul class="collapse">
+  <li><a href="#overall" id="toc-overall" class="nav-link" data-scroll-target="#overall">Overall</a></li>
+  <li><a href="#seasonality" id="toc-seasonality" class="nav-link" data-scroll-target="#seasonality">Seasonality</a></li>
+  <li><a href="#day-of-week" id="toc-day-of-week" class="nav-link" data-scroll-target="#day-of-week">Day of Week</a></li>
+  <li><a href="#time-of-day" id="toc-time-of-day" class="nav-link" data-scroll-target="#time-of-day">Time of Day</a></li>
+  <li><a href="#ride-duration" id="toc-ride-duration" class="nav-link" data-scroll-target="#ride-duration">Ride Duration</a></li>
+  <li><a href="#location" id="toc-location" class="nav-link" data-scroll-target="#location">Location</a></li>
+  <li><a href="#round-trips" id="toc-round-trips" class="nav-link" data-scroll-target="#round-trips">Round Trips</a></li>
+  </ul></li>
+  <li><a href="#additional-visuals" id="toc-additional-visuals" class="nav-link" data-scroll-target="#additional-visuals">Additional Visuals</a></li>
+  <li><a href="#location-map" id="toc-location-map" class="nav-link" data-scroll-target="#location-map">Location Map</a></li>
+  </ul></li>
+  <li><a href="#key-recommendations" id="toc-key-recommendations" class="nav-link" data-scroll-target="#key-recommendations">Key Recommendations</a>
+  <ul class="collapse">
+  <li><a href="#seasonality-1" id="toc-seasonality-1" class="nav-link" data-scroll-target="#seasonality-1">1. Seasonality</a></li>
+  <li><a href="#time-and-day" id="toc-time-and-day" class="nav-link" data-scroll-target="#time-and-day">2. Time and Day</a></li>
+  <li><a href="#location-1" id="toc-location-1" class="nav-link" data-scroll-target="#location-1">3. Location</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Cyclistic Bike-Share Data Analysis with Python Case Study</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">case study</div>
+    <div class="quarto-category">data analysis</div>
+    <div class="quarto-category">python</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Dylan Bretz Jr. </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026-01-19</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cyclistic_logo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Cyclistic logo." width="500"></p>
+</figure>
+</div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>In this case study, I used Python to analyze historical bike-share data from Chicago to understand <strong>how different types of customers used bikes differently</strong> and what those differences suggest for converting casual riders into annual members.</p>
+<p><strong>Project highlights:</strong></p>
+<ul>
+<li><a href="https://docs.google.com/presentation/d/1QIhYy39x3hqI8Ahvh6gUQBD8TNX5YNHvGoN-5PVd13U/present#slide=id.g3b209955022_0_2985" target="_blank">Google Slides presentation</a></li>
+<li><a href="./cyclistic-ride-map/" target="_blank">Interactive ride location map</a></li>
+<li><a href="https://github.com/dylanbretzjr/cyclistic-data-analysis-case-study" target="_blank">GitHub repository</a></li>
+</ul>
+</section>
+<section id="background" class="level1">
+<h1>Background</h1>
+<p>Cyclistic is a bike-share company in Chicago with two types of customers:</p>
+<ul>
+<li><strong>Casual riders</strong>—customers who purchase single-ride or full-day passes</li>
+<li><strong>Members</strong>—customers who purchase annual memberships</li>
+</ul>
+<p>Cyclistic’s finance analysts have concluded that <em>annual members are much more profitable than casual riders</em>. Because of this, the director of marketing believes the company’s long-term growth depends on increasing the number of annual memberships.</p>
+<p>To support that goal, the marketing analytics team wants to better understand how casual riders and annual members use Cyclistic bikes differently. Using these insights, the team will design new marketing strategies aimed at converting casual riders into annual members.</p>
+<section id="goal" class="level2">
+<h2 class="anchored" data-anchor-id="goal">Goal</h2>
+<p>The overall goal of the marketing analytics team is this:</p>
+<blockquote class="blockquote">
+<p><strong>Design marketing strategies aimed at converting casual riders into annual members.</strong></p>
+</blockquote>
+<p>Three questions will guide the future marketing program:</p>
+<ol type="1">
+<li>How do annual members and casual riders use Cyclistic bikes differently?</li>
+<li>Why would casual riders buy Cyclistic annual memberships?</li>
+<li>How can Cyclistic use digital media to influence casual riders to become members?</li>
+</ol>
+<p>For this case study, I focused on the first question: <em>How do annual members and casual riders use Cyclistic bikes differently?</em></p>
+</section>
+<section id="business-task" class="level2">
+<h2 class="anchored" data-anchor-id="business-task">Business Task</h2>
+<p>To address this question, I completed the following business task:</p>
+<blockquote class="blockquote">
+<p><strong>Analyze historical bike trip data to identify trends in how annual members and casual riders use Cyclistic bikes differently.</strong></p>
+</blockquote>
+</section>
+</section>
+<section id="data-source" class="level1">
+<h1>Data Source</h1>
+<p>The data used in this case study is publicly available historical bike-share trip data owned by the City of Chicago. It can be accessed <a href="https://divvy-tripdata.s3.amazonaws.com/index.html">here</a> and is provided by Motivate International Inc.&nbsp;under this <a href="https://divvybikes.com/data-license-agreement">license</a>.</p>
+<p>For this analysis, I used the most recent 12 months of available data, covering <strong>2024-11-01</strong> to <strong>2025-10-31</strong>.</p>
+<p>The data is stored across 12 CSV files, one for each month. Each row is a record of a bike trip (identified by a unique <code>ride_id</code>), and each column is a field describing the trip.</p>
+<p>The dataset consists of 13 fields:</p>
+<table class="caption-top table">
+<caption>Dataset fields and descriptions</caption>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Field Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>01</td>
+<td><code>ride_id</code></td>
+<td>Unique trip identifier</td>
+</tr>
+<tr class="even">
+<td>02</td>
+<td><code>rideable_type</code></td>
+<td>Bike type (‘classic’ or ‘electric’)</td>
+</tr>
+<tr class="odd">
+<td>03</td>
+<td><code>started_at</code></td>
+<td>Trip start date and time</td>
+</tr>
+<tr class="even">
+<td>04</td>
+<td><code>ended_at</code></td>
+<td>Trip end date and time</td>
+</tr>
+<tr class="odd">
+<td>05</td>
+<td><code>start_station_name</code></td>
+<td>Start station name</td>
+</tr>
+<tr class="even">
+<td>06</td>
+<td><code>start_station_id</code></td>
+<td>Start station ID</td>
+</tr>
+<tr class="odd">
+<td>07</td>
+<td><code>end_station_name</code></td>
+<td>End station name</td>
+</tr>
+<tr class="even">
+<td>08</td>
+<td><code>end_station_id</code></td>
+<td>End station ID</td>
+</tr>
+<tr class="odd">
+<td>09</td>
+<td><code>start_lat</code></td>
+<td>Start latitude</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td><code>start_lng</code></td>
+<td>Start longitude</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td><code>end_lat</code></td>
+<td>End latitude</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td><code>end_lng</code></td>
+<td>End longitude</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td><code>member_casual</code></td>
+<td>Membership type (‘member’ or ‘casual’)</td>
+</tr>
+</tbody>
+</table>
+<section id="data-integrity" class="level2">
+<h2 class="anchored" data-anchor-id="data-integrity">Data Integrity</h2>
+<p>In terms of data integrity, this dataset ROCCCs:</p>
+<ul>
+<li><strong>Reliable</strong>—It is reasonable to assume the data is trustworthy and unbiased for the purposes of this case study.</li>
+<li><strong>Original</strong>—The data is sourced directly from the City of Chicago and Motivate International Inc., the original owners and operators (first-party source).</li>
+<li><strong>Comprehensive</strong>—The data contains the necessary records and fields for this analysis.</li>
+<li><strong>Current</strong>—The dataset includes historical records for several years, including the relevant records from the past 12 months.</li>
+<li><strong>Cited</strong>—The data is made available under a public license from the City of Chicago and Motivate International Inc.</li>
+</ul>
+</section>
+</section>
+<section id="methodology" class="level1">
+<h1>Methodology</h1>
+<p>The tools and workflow used for this project were informed by both the <strong>business task</strong> and the <strong>dataset itself</strong>.</p>
+<section id="tools" class="level2">
+<h2 class="anchored" data-anchor-id="tools">Tools</h2>
+<p>The combined dataset contains <strong>5,569,279 rows</strong>, making it too large for standard spreadsheet software. (Microsoft Excel is limited to roughly 1 million rows, for example.)</p>
+<p>For this project, I used Python throughout since it’s super powerful and versatile and can be used end-to-end for cleaning, transformation, analysis, and visualization. Plus, Python is fun, and I wanted to practice using it for data analysis.</p>
+<p>I used Spyder 6 as my IDE because it includes features especially useful for scientific data analysis. My environment uses Python 3.12 with the following core libraries:</p>
+<ul>
+<li><code>numpy</code> and <code>pandas</code> for data manipulation and analysis</li>
+<li><code>matplotlib</code>, <code>seaborn</code>, and <code>plotly</code> for data visualization</li>
+</ul>
+</section>
+<section id="workflow" class="level2">
+<h2 class="anchored" data-anchor-id="workflow">Workflow</h2>
+<p>To make things easier, I refactored the workflow into three scripts:</p>
+<ul>
+<li><code>_1_data_cleaning.py</code>
+<ul>
+<li>Combines, cleans, and transforms data for analysis, and exports it as a CSV file.</li>
+</ul></li>
+<li><code>_2_analysis_and_viz.py</code>
+<ul>
+<li>Performs statistical analysis and generates static visualizations.</li>
+</ul></li>
+<li><code>_3_build_ride_map.py</code>
+<ul>
+<li>Builds a dynamic map visualizing ride start and end locations by membership status.</li>
+</ul></li>
+</ul>
+<p>In addition, the project includes a <code>config.py</code> file to define global file paths and a custom <code>.mplstyle</code> file for consistent visualization styling.</p>
+</section>
+</section>
+<section id="data-cleaning-and-preparation" class="level1">
+<h1>Data Cleaning and Preparation</h1>
+<p>To prepare the data for analysis, I first loaded and combined the data from all 12 monthly CSV files into a single dataset.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>raw_csv <span class="op">=</span> <span class="bu">sorted</span>(config.RAW_PATH.glob(<span class="st">'*.csv'</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> raw_csv:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">FileNotFoundError</span>(<span class="ss">f'No CSV files found in </span><span class="sc">{</span>config<span class="sc">.</span>RAW_PATH<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([pd.read_csv(f) <span class="cf">for</span> f <span class="kw">in</span> raw_csv], ignore_index<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>I then inspected the data and confirmed it was loaded and combined successfully.</p>
+<section id="initial-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="initial-cleaning">Initial Cleaning</h2>
+<p>With the data loaded and combined, I proceeded to perform some basic data exploration and cleaning.</p>
+<section id="check-duplicates" class="level3">
+<h3 class="anchored" data-anchor-id="check-duplicates">Check Duplicates</h3>
+<p>First, I checked for duplicate rows and rides, since duplicates could bias the analysis.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df.duplicated().<span class="bu">sum</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ride_id'</span>].duplicated().<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>No duplicates were found, so no action was required.</p>
+</section>
+<section id="drop-station-id-fields" class="level3">
+<h3 class="anchored" data-anchor-id="drop-station-id-fields">Drop Station ID Fields</h3>
+<p>Next, I dropped the <code>start_station_id</code> and <code>end_station_id</code> columns.</p>
+<p>These columns contained inconsistencies due to station ID changes made between May and June 2025. Since station IDs were not required for this analysis anyway (station names and coordinates were sufficient), I dropped both columns to reduce noise and avoid potential confusion later on.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.drop(columns<span class="op">=</span>[<span class="st">'start_station_id'</span>, <span class="st">'end_station_id'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="convert-timestamps-to-datetime" class="level3">
+<h3 class="anchored" data-anchor-id="convert-timestamps-to-datetime">Convert Timestamps to Datetime</h3>
+<p>Finally, I converted the <code>started_at</code> and <code>ended_at</code> columns to pandas datetime objects so I could transform the data using timestamps later in the process.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'started_at'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'started_at'</span>])</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ended_at'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'ended_at'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="handling-missing-values" class="level2">
+<h2 class="anchored" data-anchor-id="handling-missing-values">Handling Missing Values</h2>
+<p>Next, I performed a null count and found <strong>2,397,565 missing values</strong> overall (i.e., empty cells across all columns).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df.isna().<span class="bu">sum</span>().<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To understand more, I also performed a null count by column.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df.isna().<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Null Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>start_station_name</td>
+<td>1,166,861</td>
+</tr>
+<tr class="even">
+<td>end_station_name</td>
+<td>1,219,784</td>
+</tr>
+<tr class="odd">
+<td>end_lat</td>
+<td>5,460</td>
+</tr>
+<tr class="even">
+<td>end_lng</td>
+<td>5,460</td>
+</tr>
+</tbody>
+</table>
+<section id="drop-rides-missing-end-coordinates" class="level3">
+<h3 class="anchored" data-anchor-id="drop-rides-missing-end-coordinates">Drop Rides Missing End Coordinates</h3>
+<p>Since both the <code>end_lat</code> and <code>end_lng</code> columns were missing the exact same number of missing values, I checked whether both values were missing in the same rows by counting the rows missing <em>both</em> end coordinates.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"end_lat"</span>, <span class="st">"end_lng"</span>]].isna().<span class="bu">all</span>(axis<span class="op">=</span><span class="dv">1</span>).<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>5,460 rows</strong> were missing values in both the <code>end_lat</code> and <code>end_lng</code> columns, confirming that the missing coordinate data belonged to the same rows.</p>
+<p>These rows comprised only 0.1% of the dataset, so dropping them won’t have a significant impact on the analysis. Therefore, I dropped them in order to be able to use the remaining coordinates for mapping.</p>
+</section>
+<section id="fill-missing-station-names" class="level3">
+<h3 class="anchored" data-anchor-id="fill-missing-station-names">Fill Missing Station Names</h3>
+<p>Next, I addressed the missing start and end station names.</p>
+<p>Since so many rows were missing station names, dropping them would likely introduce bias and compromise the analysis.</p>
+<p>Instead, I filled the missing station names with a unique placeholder value (<code>no_station_recorded</code>). This approach preserved ride records while still allowing for aggregate analysis using station names.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'start_station_name'</span>] <span class="op">=</span> (</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'start_station_name'</span>].fillna(<span class="st">'no_station_recorded'</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'end_station_name'</span>] <span class="op">=</span> (</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'end_station_name'</span>].fillna(<span class="st">'no_station_recorded'</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="validate-timeframe" class="level2">
+<h2 class="anchored" data-anchor-id="validate-timeframe">Validate Timeframe</h2>
+<p>Before transforming the data further, I checked whether all trips fell within the intended analysis window (2024-11-01 to 2025-10-31).</p>
+<p>I first checked the minimum and maximum trip start and end timestamps.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"started_at"</span>].<span class="bu">min</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"started_at"</span>].<span class="bu">max</span>()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"ended_at"</span>].<span class="bu">min</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"ended_at"</span>].<span class="bu">max</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The earliest start date was <strong>2024-10-31</strong>, which falls one day before the analysis window.</p>
+<p>I then counted how many rides started before the analysis window.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(df[df[<span class="st">'started_at'</span>] <span class="op">&lt;</span> TIMEFRAME_START])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>There were <strong>33 rides</strong> that started before 2024-11-01. These rides all ended <em>after</em> the window started, which explains why they were included in the dataset in the first place.</p>
+<p>To keep the dataset consistent and avoid their impact on my analysis and visualizations, I dropped these 33 rows.</p>
+</section>
+</section>
+<section id="data-transformation-and-validation" class="level1">
+<h1>Data Transformation and Validation</h1>
+<p>The next step was to transform the data for further processing.</p>
+<p>First, I extracted the start date, month, week, day of week, and hour into new columns.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'start_date'</span>] <span class="op">=</span> df[<span class="st">'started_at'</span>].dt.strftime(<span class="st">'%Y-%m-</span><span class="sc">%d</span><span class="st">'</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'start_month'</span>] <span class="op">=</span> df[<span class="st">'started_at'</span>].dt.strftime(<span class="st">'%Y-%m'</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'start_week'</span>] <span class="op">=</span> df[<span class="st">'started_at'</span>].dt.strftime(<span class="st">'%Y-w%W'</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'start_weekday'</span>] <span class="op">=</span> df[<span class="st">'started_at'</span>].dt.strftime(<span class="st">'%w'</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'start_hour'</span>] <span class="op">=</span> df[<span class="st">'started_at'</span>].dt.hour</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then, I calculated the ride duration (in minutes) and stored it as a new column.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ride_duration_min'</span>] <span class="op">=</span> (</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    (df[<span class="st">'ended_at'</span>] <span class="op">-</span> df[<span class="st">'started_at'</span>])</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    .dt.total_seconds() <span class="op">/</span> <span class="dv">60</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>).<span class="bu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With these new columns, I was able to perform additional verification and cleaning.</p>
+<section id="drop-rides-affected-by-dst" class="level2">
+<h2 class="anchored" data-anchor-id="drop-rides-affected-by-dst">Drop Rides Affected by DST</h2>
+<p>To validate ride duration values, I first checked for negative-duration rides.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(df[df[<span class="st">"ride_duration_min"</span>] <span class="op">&lt;</span> <span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>There were <strong>43 rides</strong> with negative durations. After investigating these records, I found that they all…</p>
+<ul>
+<li>occurred on the same day (2024-11-03),</li>
+<li>started at the same time (between 1 a.m. and 2 a.m.),</li>
+<li>and ended at the same time (between 1 a.m. and 2 a.m.).</li>
+</ul>
+<p>This led me to suspect that the negative-duration rides could have been caused by daylight saving time (DST). I confirmed that Chicago observed DST and that the clocks turned back 1 hour at 2 a.m. on 2024-11-03, which coincided with the negative-duration rides in the dataset.</p>
+<p>While there were only 43 rides with negative durations, I couldn’t simply drop them since there were likely other rows affected by the DST time shift.</p>
+<p>Basically, if a ride occurred during the <em>fall</em> time shift window, the calculated ride duration would be 1 hour <em>less</em> than it actually was, causing rides shorter than 1 hour to be negative. And if a ride occurred during the <em>spring</em> time shift window, the calculated ride duration would be 1 hour <em>more</em> than it actually was.</p>
+<p>In total, <strong>507 rows</strong> (0.01%) were affected by DST—476 in the fall and 31 in the spring. Since so few rows were affected, I dropped them with negligible impact on the findings.</p>
+<p>While it also would have been possible to adjust the timestamps and correct these rows, dropping them was the simplest and cleanest approach for this case study, especially considering the negligible loss of data.</p>
+</section>
+<section id="drop-ride-duration-outliers" class="level2">
+<h2 class="anchored" data-anchor-id="drop-ride-duration-outliers">Drop Ride Duration Outliers</h2>
+<p>The final cleaning step was to inspect the distribution of ride durations for extreme outliers that might not represent real rider behavior.</p>
+<p>First, I checked the minimum and maximum ride duration.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ride_duration_min'</span>].<span class="bu">min</span>()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ride_duration_min'</span>].<span class="bu">max</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The minimum ride duration was <strong>0.0 minutes</strong>, while the maximum ride duration exceeded a day (<strong>1499.97 minutes</strong>). Neither extreme would likely represent valid trips.</p>
+<p>To better understand this, I plotted the distribution of ride lengths.</p>
+<p><strong>Full Distribution of Ride Duration:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_B1_eda_ride_duration_distribution_full.png" class="img-fluid"></p>
+<p>The vast majority of rides lasted <strong>1 hour or less</strong>.</p>
+<p>However, the distribution showed a long right tail of unusually lengthy rides. To make this tail more apparent, I plotted ride frequency on a logarithmic scale.</p>
+<p><strong>Full Distribution of Ride Duration (Log Scale):</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_B2_eda_ride_duration_distribution_log.png" class="img-fluid"></p>
+<p>Overall, the distribution is heavily <strong>right-skewed</strong>, with most rides concentrated at shorter durations.</p>
+<p>To take a closer look at this concentration, I zoomed in on rides under 1 hour.</p>
+<p><strong>Distribution of Ride Duration Under 1 Hour:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_B3_eda_ride_duration_distribution_under_1hr.png" class="img-fluid"></p>
+<p>At this scale, there is a noticeable spike in very short rides, with an unusually high count lasting <strong>1 minute or less</strong>.</p>
+<p>To examine this more closely, I zoomed in further to rides under 5 minutes.</p>
+<p><strong>Distribution of Ride Duration Under 5 Minutes:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_B4_eda_ride_duration_distribution_under_5min.png" class="img-fluid"></p>
+<p>This revealed an especially high concentration of rides lasting <strong>30 seconds or less</strong>.</p>
+<p>I suspected that the unusually high frequency of extremely short rides may have been caused by false starts (undocking and quickly re-docking a bike in favor of another) or canceled rides. Extremely long rides, on the other hand, may have been caused by docking errors or forgotten rides.</p>
+<p>Since both extremely short and extremely long rides likely do not represent typical rider behavior, I dropped all rides lasting <strong>1 minute or less</strong> and all rides lasting <strong>1 day or more</strong>.</p>
+<p>142,855 rides lasting 1 minute or less and 207 rides lasting 1 day or more were removed for a total of <strong>143,062 rows</strong>, representing 2.57% of the original combined dataset.</p>
+</section>
+<section id="cleaning-summary" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning-summary">Cleaning Summary</h2>
+<p>To review, here is a summary of all the steps so far:</p>
+<ul>
+<li>Loaded and combined data
+<ul>
+<li>Total records: 5,569,279</li>
+</ul></li>
+<li>Checked for duplicate rows/rides: 0 duplicates</li>
+<li>Dropped <code>start_station_id</code> and <code>end_station_id</code> columns</li>
+<li>Converted <code>started_at</code> and <code>ended_at</code> columns to datetime</li>
+<li>Checked for null values: 2,397,565 nulls</li>
+<li>Dropped rows missing end coordinates: 5,460 (0.10%)</li>
+<li>Filled missing station names with a placeholder (<code>no_station_recorded</code>)</li>
+<li>Dropped rides starting before timeframe: 33 (0.00%)</li>
+<li>Transformed data:
+<ul>
+<li>Extracted start date, month, week, day of week, and hour to new columns</li>
+<li>Calculated ride duration in minutes in a new column</li>
+</ul></li>
+<li>Dropped rows affected by DST: 507 (0.01%)</li>
+<li>Dropped rides 1 minute or less and rides 1 day or more: 143,062 (2.57%)</li>
+</ul>
+<p>In total, <strong>149,062 rows</strong> (2.68%) were dropped during cleaning, leaving <strong>5,420,217 rows</strong> (over 97%) for analysis.</p>
+</section>
+<section id="export-cleaned-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="export-cleaned-dataset">Export Cleaned Dataset</h2>
+<p>With the dataset cleaned and validated, I exported and saved it as a CSV file. This way, I’ll have a copy of the cleaned data and won’t have to run the cleaning script every time.</p>
+<p>Before exporting, I reset the index to ensure row numbers were continuous after manipulating the data.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>df.to_csv(config.CLEAN_PATH, index<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Since the dataset is large, I validated the export by re-importing the cleaned CSV and confirming that it matched the dataframe used to create it.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>clean_df <span class="op">=</span> pd.read_csv(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    config.CLEAN_PATH, parse_dates<span class="op">=</span>[<span class="st">'started_at'</span>, <span class="st">'ended_at'</span>]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    pd.testing.assert_frame_equal(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        df, clean_df, check_dtype<span class="op">=</span><span class="va">False</span>, check_exact<span class="op">=</span><span class="va">False</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'SUCCESS: Dataframes match.'</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">del</span> clean_df</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">AssertionError</span> <span class="im">as</span> e:</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'WARNING: Dataframes do not match:'</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The datasets matched, confirming that the cleaned dataset exported successfully.</p>
+</section>
+</section>
+<section id="data-analysis" class="level1">
+<h1>Data Analysis</h1>
+<p>The dataset is now cleaned and ready to be used to analyze how annual members and casual riders use bikes differently.</p>
+<section id="summary-tables" class="level2">
+<h2 class="anchored" data-anchor-id="summary-tables">Summary Tables</h2>
+<p>The first step of the analysis was to create summary tables for each statistic.</p>
+<p>To start, I created summary tables to calculate the total counts and proportion of rides by membership for the following:</p>
+<ol type="1">
+<li><strong>Overall</strong>—the entire 12-month period (2024-11-01 to 2025-10-31)</li>
+<li><strong>Month</strong>—per month</li>
+<li><strong>Week</strong>—per week</li>
+<li><strong>Weekday</strong>—per day of week (Sunday–Saturday)</li>
+<li><strong>Weekend</strong>—weekday vs weekend</li>
+<li><strong>Hour</strong>—per hour of day</li>
+<li><strong>Bike type</strong>—by bike type (‘classic’ or ‘electric’)</li>
+<li><strong>Round-trip</strong>—one-way vs round-trip</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sum_overall <span class="op">=</span> get_counts_and_pct(df, [<span class="st">'member_casual'</span>])</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>sum_month <span class="op">=</span> get_counts_and_pct(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_month'</span>, <span class="st">'member_casual'</span>]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>sum_week <span class="op">=</span> get_counts_and_pct(</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_week'</span>, <span class="st">'member_casual'</span>]</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>sum_weekday <span class="op">=</span> get_counts_and_pct(</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_weekday'</span>, <span class="st">'member_casual'</span>]</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>sum_weekend <span class="op">=</span> get_counts_and_pct(</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    df.assign(</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        day_type<span class="op">=</span>np.where(</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>            df[<span class="st">'start_weekday'</span>].isin([<span class="dv">0</span>, <span class="dv">6</span>]), <span class="st">'Weekend'</span>, <span class="st">'Weekday'</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'day_type'</span>, <span class="st">'member_casual'</span>]</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>sum_hour <span class="op">=</span> get_counts_and_pct(</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_hour'</span>, <span class="st">'member_casual'</span>]</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>sum_biketype <span class="op">=</span> get_counts_and_pct(</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'rideable_type'</span>, <span class="st">'member_casual'</span>]</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>sum_roundtrip <span class="op">=</span> get_counts_and_pct(</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>    df.assign(</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>        is_roundtrip<span class="op">=</span>df[<span class="st">'start_station_name'</span>] <span class="op">==</span> df[<span class="st">'end_station_name'</span>]</span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'is_roundtrip'</span>, <span class="st">'member_casual'</span>]</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In order to visualize the percent change per month by membership, I calculated this in a new column in the monthly counts and percentages summary table (<code>sum_month</code>).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sum_month[<span class="st">'pct_change'</span>] <span class="op">=</span> (</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    sum_month</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">'member_casual'</span>)[<span class="st">'count'</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    .pct_change() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Next, I calculated ride duration statistics (min, max, mean, median, mode, Q1, Q3, IQR) by membership status for the following:</p>
+<ol type="1">
+<li><strong>Overall</strong>—the entire 12-month period (2024-11-01 to 2025-10-31)</li>
+<li><strong>Month</strong>—per month</li>
+<li><strong>Weekday</strong>—per day of week (Sunday–Saturday)</li>
+<li><strong>Bike type</strong>—by bike type (‘classic’ or ‘electric’)</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>stats_aggs <span class="op">=</span> {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'min'</span>: <span class="st">'min'</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'max'</span>: <span class="st">'max'</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'mean'</span>: <span class="st">'mean'</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'median'</span>: <span class="st">'median'</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'mode'</span>: <span class="kw">lambda</span> x: x.mode().iloc[<span class="dv">0</span>] <span class="cf">if</span> <span class="kw">not</span> x.mode().empty <span class="cf">else</span> np.nan,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'q1'</span>: <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.25</span>),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'q3'</span>: <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.75</span>),</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'iqr'</span>: <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.75</span>) <span class="op">-</span> x.quantile(<span class="fl">0.25</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>duration_overall <span class="op">=</span> (</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">'member_casual'</span>)[<span class="st">'ride_duration_min'</span>]</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    .agg(<span class="op">**</span>stats_aggs).reset_index()</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>duration_month <span class="op">=</span> (</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    df.groupby([<span class="st">'start_month'</span>, <span class="st">'member_casual'</span>])[<span class="st">'ride_duration_min'</span>]</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    .agg(<span class="op">**</span>stats_aggs).reset_index()</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>duration_weekday <span class="op">=</span> (</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    df.groupby([<span class="st">'start_weekday'</span>, <span class="st">'member_casual'</span>])[<span class="st">'ride_duration_min'</span>]</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    .agg(<span class="op">**</span>stats_aggs).reset_index()</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>duration_biketype <span class="op">=</span> (</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>    df.groupby([<span class="st">'rideable_type'</span>, <span class="st">'member_casual'</span>])[<span class="st">'ride_duration_min'</span>]</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    .agg(<span class="op">**</span>stats_aggs).reset_index()</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>I also found the mode start day of week (most popular day) by membership status:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mode_weekday <span class="op">=</span> (</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    df.pivot_table(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>        index<span class="op">=</span><span class="st">'member_casual'</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        values<span class="op">=</span><span class="st">'start_weekday'</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        aggfunc<span class="op">=</span><span class="kw">lambda</span> x: x.mode().iloc[<span class="dv">0</span>] <span class="cf">if</span> <span class="kw">not</span> x.mode().empty <span class="cf">else</span> <span class="va">None</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        margins<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        margins_name<span class="op">=</span><span class="st">'overall'</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">'start_weekday'</span>: <span class="st">'mode_weekday'</span>})</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then, I found the top stations, routes (station-to-station pairs), and round-trips (same start and end station) for both members and casual riders.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Top stations</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>top_start_m <span class="op">=</span> get_ranking(df, [<span class="st">'start_station_name'</span>], <span class="st">'member'</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>top_start_c <span class="op">=</span> get_ranking(df, [<span class="st">'start_station_name'</span>], <span class="st">'casual'</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>top_end_m <span class="op">=</span> get_ranking(df, [<span class="st">'end_station_name'</span>], <span class="st">'member'</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>top_end_c <span class="op">=</span> get_ranking(df, [<span class="st">'end_station_name'</span>], <span class="st">'casual'</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Top routes</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>top_routes_m <span class="op">=</span> get_ranking(</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_station_name'</span>, <span class="st">'end_station_name'</span>], <span class="st">'member'</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>top_routes_c <span class="op">=</span> get_ranking(</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_station_name'</span>, <span class="st">'end_station_name'</span>], <span class="st">'casual'</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Top round-trips</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>is_roundtrip <span class="op">=</span> df[<span class="st">'start_station_name'</span>] <span class="op">==</span> df[<span class="st">'end_station_name'</span>]</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>top_roundtrips_m <span class="op">=</span> get_ranking(</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    df[is_roundtrip], [<span class="st">'start_station_name'</span>], <span class="st">'member'</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>top_roundtrips_c <span class="op">=</span> get_ranking(</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    df[is_roundtrip], [<span class="st">'start_station_name'</span>], <span class="st">'casual'</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Finally, I calculated the ride density by membership for each hour of each day of the week (Sunday–Saturday) to create the heat maps.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>density_day_hour_m <span class="op">=</span> get_ranking(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_weekday'</span>, <span class="st">'start_hour'</span>], <span class="st">'member'</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>density_day_hour_c <span class="op">=</span> get_ranking(</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    df, [<span class="st">'start_weekday'</span>, <span class="st">'start_hour'</span>], <span class="st">'casual'</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="pivot-tables" class="level2">
+<h2 class="anchored" data-anchor-id="pivot-tables">Pivot Tables</h2>
+<p>To prepare the data for plotting, I created pivot tables from the summary tables created in the previous section.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>pivot_monthly_counts <span class="op">=</span> sum_month.pivot(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">'start_month'</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'member_casual'</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'count'</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>pivot_weekly_counts <span class="op">=</span> (</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    sum_week</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        .pivot(index<span class="op">=</span><span class="st">'start_week'</span>, columns<span class="op">=</span><span class="st">'member_casual'</span>, values<span class="op">=</span><span class="st">'count'</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        .fillna(<span class="dv">0</span>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        .sort_index()</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>pivot_monthly_pct_change <span class="op">=</span> (</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    sum_month</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    .pivot(</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>        index<span class="op">=</span><span class="st">'start_month'</span>,</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>        columns<span class="op">=</span><span class="st">'member_casual'</span>,</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>        values<span class="op">=</span><span class="st">'pct_change'</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    .sort_index()</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>pivot_weekday_counts <span class="op">=</span> sum_weekday.pivot(</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">'start_weekday'</span>,</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'member_casual'</span>,</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'count'</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>pivot_weekday_prop <span class="op">=</span> (</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>    sum_weekday</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>    .pivot(index<span class="op">=</span><span class="st">'start_weekday'</span>, columns<span class="op">=</span><span class="st">'member_casual'</span>, values<span class="op">=</span><span class="st">'percentage'</span>)</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>    .reindex(<span class="bu">range</span>(<span class="dv">7</span>), fill_value<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>    .sort_index()</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>pivot_weekend_counts <span class="op">=</span> (</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>    sum_weekend</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>    .pivot(index<span class="op">=</span><span class="st">'day_type'</span>, columns<span class="op">=</span><span class="st">'member_casual'</span>, values<span class="op">=</span><span class="st">'count'</span>)</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>    .reindex([<span class="st">'Weekday'</span>, <span class="st">'Weekend'</span>])</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>pivot_weekend_prop <span class="op">=</span> (</span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>    sum_weekend</span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>    .pivot(index<span class="op">=</span><span class="st">'day_type'</span>, columns<span class="op">=</span><span class="st">'member_casual'</span>, values<span class="op">=</span><span class="st">'percentage'</span>)</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>    .reindex([<span class="st">'Weekday'</span>, <span class="st">'Weekend'</span>])</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a>pivot_hour_counts <span class="op">=</span> (</span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>    sum_hour</span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a>        .pivot(index<span class="op">=</span><span class="st">'start_hour'</span>, columns<span class="op">=</span><span class="st">'member_casual'</span>, values<span class="op">=</span><span class="st">'count'</span>)</span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a>        .fillna(<span class="dv">0</span>)</span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a>        .sort_index()</span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a>pivot_density_day_hour_m <span class="op">=</span> (</span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a>    density_day_hour_m</span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a>        .pivot(index<span class="op">=</span><span class="st">'start_weekday'</span>, columns<span class="op">=</span><span class="st">'start_hour'</span>, values<span class="op">=</span><span class="st">'count'</span>)</span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a>        .reindex(index<span class="op">=</span><span class="bu">range</span>(<span class="dv">7</span>), columns<span class="op">=</span><span class="bu">range</span>(<span class="dv">24</span>), fill_value<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a>pivot_density_day_hour_c <span class="op">=</span> (</span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a>    density_day_hour_c</span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a>        .pivot(index<span class="op">=</span><span class="st">'start_weekday'</span>, columns<span class="op">=</span><span class="st">'start_hour'</span>, values<span class="op">=</span><span class="st">'count'</span>)</span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a>        .reindex(index<span class="op">=</span><span class="bu">range</span>(<span class="dv">7</span>), columns<span class="op">=</span><span class="bu">range</span>(<span class="dv">24</span>), fill_value<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a>pivot_density_day_hour_m <span class="op">=</span> pivot_density_day_hour_m.div(</span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a>    pivot_density_day_hour_m.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), axis<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a>pivot_density_day_hour_c <span class="op">=</span> pivot_density_day_hour_c.div(</span>
+<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a>    pivot_density_day_hour_c.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), axis<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>pivot_duration_weekday <span class="op">=</span> duration_weekday.pivot(</span>
+<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">'start_weekday'</span>,</span>
+<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'member_casual'</span>,</span>
+<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'median'</span></span>
+<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a>pivot_roundtrip_counts <span class="op">=</span> sum_roundtrip.pivot(</span>
+<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">'is_roundtrip'</span>,</span>
+<span id="cb23-83"><a href="#cb23-83" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'member_casual'</span>,</span>
+<span id="cb23-84"><a href="#cb23-84" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'count'</span></span>
+<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a>pivot_roundtrip_prop <span class="op">=</span> (</span>
+<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a>    sum_roundtrip</span>
+<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a>    .pivot(index<span class="op">=</span><span class="st">'is_roundtrip'</span>, columns<span class="op">=</span><span class="st">'member_casual'</span>, values<span class="op">=</span><span class="st">'percentage'</span>)</span>
+<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a>    .reindex([<span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a>pivot_biketype_counts <span class="op">=</span> sum_biketype.pivot(</span>
+<span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">'rideable_type'</span>,</span>
+<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">'member_casual'</span>,</span>
+<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">'count'</span></span>
+<span id="cb23-97"><a href="#cb23-97" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-98"><a href="#cb23-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-99"><a href="#cb23-99" aria-hidden="true" tabindex="-1"></a>pivot_biketype_prop <span class="op">=</span> (</span>
+<span id="cb23-100"><a href="#cb23-100" aria-hidden="true" tabindex="-1"></a>    sum_biketype</span>
+<span id="cb23-101"><a href="#cb23-101" aria-hidden="true" tabindex="-1"></a>    .pivot(index<span class="op">=</span><span class="st">'rideable_type'</span>, columns<span class="op">=</span><span class="st">'member_casual'</span>, values<span class="op">=</span><span class="st">'percentage'</span>)</span>
+<span id="cb23-102"><a href="#cb23-102" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Note: No pivot table was needed for <code>sum_overall</code> since the data was ready to be plotted as-is.</p>
+<p>In addition, I prepared the data for the box plot showing ride duration distribution by membership status.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dist_duration_overall <span class="op">=</span> (</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">'ride_duration_min'</span>, <span class="st">'member_casual'</span>]]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    .assign(membership_group<span class="op">=</span><span class="kw">lambda</span> d: d[<span class="st">'member_casual'</span>].<span class="bu">map</span>({</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">'member'</span>: <span class="st">'Member'</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">'casual'</span>: <span class="st">'Casual'</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    }))</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">'ride_duration_min'</span>, <span class="st">'membership_group'</span>]]</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>median_values <span class="op">=</span> (</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    dist_duration_overall</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">'membership_group'</span>)[<span class="st">'ride_duration_min'</span>]</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    .median()</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="data-visualization" class="level1">
+<h1>Data Visualization</h1>
+<p>Using the summary and pivot tables created earlier, I created visualizations to show how annual members and casual riders use bikes differently.</p>
+<p>Below, I’ve included one representative example—the first bar chart showing “Total Rides by Membership Status”—which demonstrates the simplest implementation. For the complete visualization code, including more complex graphics, see the <code>_2_analysis_and_viz</code> script in my <a href="https://github.com/dylanbretzjr/cyclistic-data-analysis-case-study">GitHub repository</a>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#%% fig_1 Total rides by membership status</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>WIDTH <span class="op">=</span> <span class="fl">0.6</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>bars_member <span class="op">=</span> ax.bar(</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'Member'</span>],</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    sum_overall.loc[</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        sum_overall[<span class="st">'member_casual'</span>] <span class="op">==</span> <span class="st">'member'</span>, <span class="st">'count'</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span>WIDTH,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">'Member'</span>,</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    zorder<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>bars_casual <span class="op">=</span> ax.bar(</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'Casual'</span>],</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    sum_overall.loc[</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>        sum_overall[<span class="st">'member_casual'</span>] <span class="op">==</span> <span class="st">'casual'</span>, <span class="st">'count'</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span>WIDTH,</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">'Casual'</span>,</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    zorder<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Total Rides by Membership Status'</span>)</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Membership Status'</span>)</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Total Rides (in millions)'</span>)</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>ymax <span class="op">=</span> sum_overall[<span class="st">'count'</span>].<span class="bu">max</span>() <span class="op">*</span> <span class="fl">1.2</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, ymax)</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>ax.set_yticks(np.arange(<span class="dv">0</span>, ymax, <span class="dv">1_000_000</span>))</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>ax.set_yticks(np.arange(<span class="dv">0</span>, ymax, <span class="dv">500_000</span>), minor<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_major_formatter(</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>    FuncFormatter(<span class="kw">lambda</span> x, pos: <span class="ss">f'</span><span class="sc">{</span>x<span class="op">/</span><span class="dv">1_000_000</span><span class="sc">:.0f}</span><span class="ss">M'</span>)</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>, axis<span class="op">=</span><span class="st">'x'</span>)</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>ax.grid(which<span class="op">=</span><span class="st">'minor'</span>, axis<span class="op">=</span><span class="st">'y'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, alpha<span class="op">=</span><span class="fl">0.2</span>, zorder<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotation: Bar counts and percentages</span></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> bars, category <span class="kw">in</span> [(bars_member, <span class="st">'member'</span>), (bars_casual, <span class="st">'casual'</span>)]:</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>    row <span class="op">=</span> sum_overall.loc[</span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>        sum_overall[<span class="st">'member_casual'</span>] <span class="op">==</span> category</span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>    ].iloc[<span class="dv">0</span>]</span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>    ax.bar_label(</span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>        bars,</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>        labels<span class="op">=</span>[<span class="ss">f'</span><span class="sc">{</span>row[<span class="st">"count"</span>]<span class="sc">:,.0f}</span><span class="ch">\n</span><span class="ss">(</span><span class="sc">{</span>row[<span class="st">"percentage"</span>]<span class="sc">:.1f}</span><span class="ss">%)'</span>],</span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>        padding<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>        fontweight<span class="op">=</span><span class="st">'bold'</span>,</span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">'black'</span></span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotation: Sample size</span></span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>ax.text(</span>
+<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.99</span>, <span class="fl">0.95</span>,</span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'n = </span><span class="sc">{</span>sum_overall[<span class="st">"count"</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:,}</span><span class="ss"> rides'</span>,</span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span>ax.transAxes,</span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a>    ha<span class="op">=</span><span class="st">'right'</span>, va<span class="op">=</span><span class="st">'top'</span>,</span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="dv">16</span>, color<span class="op">=</span><span class="st">'dimgray'</span></span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>plt.savefig(</span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a>    viz_png <span class="op">/</span> <span class="st">'fig_1_Total_rides.png'</span>,</span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a>    bbox_inches<span class="op">=</span><span class="st">"tight"</span>,</span>
+<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a>    dpi<span class="op">=</span><span class="dv">300</span></span>
+<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="key-insights" class="level2">
+<h2 class="anchored" data-anchor-id="key-insights">Key Insights</h2>
+<p>The visualizations below summarize the key insights on how members and casual riders use bikes differently.</p>
+<section id="overall" class="level3">
+<h3 class="anchored" data-anchor-id="overall">Overall</h3>
+<p><strong>Total Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_1_Total_rides.png" class="img-fluid"></p>
+<ul>
+<li>Annual members make up the <strong>majority</strong> of rides overall (65%)</li>
+<li>Casual riders still make up a <strong>significant portion</strong> (35%)</li>
+</ul>
+</section>
+<section id="seasonality" class="level3">
+<h3 class="anchored" data-anchor-id="seasonality">Seasonality</h3>
+<p><strong>Total Monthly Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_2_1_Total_monthly_rides.png" class="img-fluid"></p>
+<ul>
+<li>Rides <strong>peaked</strong> during <strong>warmer months</strong> (summer and early fall)</li>
+</ul>
+<p><strong>Weekly Proportion of Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_2_2_Proportion_of_rides_per_week.png" class="img-fluid"></p>
+<ul>
+<li>Proportion of casual riders <strong>increases</strong> during peak riding season</li>
+</ul>
+<p><strong>Monthly Percent Change in Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_2_3_Percent_change_in_rides_per_month.png" class="img-fluid"></p>
+<ul>
+<li>Overall <strong>positive growth</strong> from February through August, with most growth during spring</li>
+<li><strong>Huge spike</strong> of casual riders in March (<strong>+207%</strong> from February)</li>
+</ul>
+</section>
+<section id="day-of-week" class="level3">
+<h3 class="anchored" data-anchor-id="day-of-week">Day of Week</h3>
+<p><strong>Total Daily Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_3_1_Total_rides_per_day_of_week.png" class="img-fluid"></p>
+<ul>
+<li>Total <strong>member</strong> rides are higher on <strong>weekdays</strong> (<strong>‘n’</strong> shaped)</li>
+<li>The busiest day for members is <strong>Thursday</strong></li>
+<li>Total <strong>casual</strong> rides are higher on <strong>weekends</strong> (<strong>‘u’</strong> shaped)</li>
+<li>The busiest day for casual riders is <strong>Saturday</strong></li>
+</ul>
+<p><strong>Proportion of Weekday vs Weekend Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_3_2_Proportion_of_weekday_vs_weekend_rides.png" class="img-fluid"></p>
+<ul>
+<li>Proportion of casual riders is <strong>higher on weekends</strong></li>
+</ul>
+</section>
+<section id="time-of-day" class="level3">
+<h3 class="anchored" data-anchor-id="time-of-day">Time of Day</h3>
+<p><strong>Total Rides per Start Hour by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_4_1_Total_rides_per_start_hour.png" class="img-fluid"></p>
+<ul>
+<li>Two member <strong>daily commute spikes</strong> at 8 a.m. and 5 p.m.</li>
+<li>Member <strong>lunch rush</strong> around noon</li>
+<li>Casual rides <strong>gradually build</strong> throughout the day (until 5 p.m.)</li>
+</ul>
+<p><strong>Ride Density per Day and Hour by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_4_2a_Ride_density_per_start_hour_and_day.png" class="img-fluid"></p>
+<p><strong>Ride Density per Day and Hour (Members):</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_4_2b_Member_ride_density_per_start_hour_and_day.png" class="img-fluid"></p>
+<ul>
+<li>Distinct <strong>‘O’</strong> shape</li>
+<li>Member activity corresponds with <strong>weekday commute times</strong> and <strong>weekend afternoons</strong></li>
+</ul>
+<p><strong>Ride Density per Day and Hour (Casual Riders):</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_4_2c_Casual_ride_density_per_start_hour_and_day.png" class="img-fluid"></p>
+<ul>
+<li>Faint <strong>‘O’</strong> shape</li>
+<li>Casual rider activity is <strong>more dispersed</strong> across time and day</li>
+</ul>
+</section>
+<section id="ride-duration" class="level3">
+<h3 class="anchored" data-anchor-id="ride-duration">Ride Duration</h3>
+<p><strong>Distribution of Ride Durations by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_5_1_Distribution_of_ride_duration.png" class="img-fluid"></p>
+<ul>
+<li>Casual riders tend to take slightly <strong>longer</strong> rides</li>
+<li>Member median ride length is <strong>8.7 minutes</strong></li>
+<li>Casual rider median ride length is <strong>11.9 minutes</strong></li>
+</ul>
+<p><strong>Median Ride Duration per Weekday by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_5_2_Median_ride_duration_per_weekday.png" class="img-fluid"></p>
+<ul>
+<li>Member median ride duration is fairly <strong>consistent</strong> day-to-day</li>
+<li>Casual riders take <strong>longer</strong> rides on <strong>weekends</strong></li>
+</ul>
+</section>
+<section id="location" class="level3">
+<h3 class="anchored" data-anchor-id="location">Location</h3>
+<p><strong>Top 10 Start Stations by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_6_1a_Top_start_stations.png" class="img-fluid"></p>
+<p><strong>Top 10 End Stations by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_6_1b_Top_end_stations.png" class="img-fluid"></p>
+<ul>
+<li>No overlap between top 10 start or end stations for members and casual riders</li>
+<li>Top start and end stations are consistent</li>
+</ul>
+</section>
+<section id="round-trips" class="level3">
+<h3 class="anchored" data-anchor-id="round-trips">Round Trips</h3>
+<p><strong>Total One-Way vs Round-Trips by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_7_1_Total_one_way_vs_round_trips.png" class="img-fluid"></p>
+<ul>
+<li>Most trips are <strong>one-way</strong> (different start and end stations)</li>
+</ul>
+<p><strong>Proportion of One-Way vs Round-Trips by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_7_2_Proportion_of_one_way_vs_round_trips.png" class="img-fluid"></p>
+<ul>
+<li>Larger proportion of casual riders take <strong>round trips</strong></li>
+</ul>
+</section>
+</section>
+<section id="additional-visuals" class="level2">
+<h2 class="anchored" data-anchor-id="additional-visuals">Additional Visuals</h2>
+<p>The following visualizations provide additional context and are included for reference.</p>
+<p><strong>Daily Proportion of Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_A1_Proportion_of_rides_per_day_of_week.png" class="img-fluid"></p>
+<p><strong>Total Weekday vs Weekend Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_A2_Total_weekday_vs_weekend_rides.png" class="img-fluid"></p>
+<p><strong>Hourly Proportion of Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_A3_Proportion_of_rides_per_start_hour.png" class="img-fluid"></p>
+<p><strong>Total Classic vs Electric Bike Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_A4_Total_rides_by_rideable_type.png" class="img-fluid"></p>
+<p><strong>Proportion of Classic vs Electric Bike Rides by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_A5_Proportion_by_rideable_type.png" class="img-fluid"></p>
+</section>
+<section id="location-map" class="level2">
+<h2 class="anchored" data-anchor-id="location-map">Location Map</h2>
+<p>To better compare geographic differences, I created a dynamic, density-weighted point map showing ride start and end locations by membership type using Plotly. I exported it to HTML with custom JavaScript that links the pan and zoom of the maps and adds responsive scaling for different screen sizes.</p>
+<p><strong>Ride Locations by Membership Status:</strong></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_6_2a_membership_ride_location.png" class="img-fluid"></p>
+<ul>
+<li>Member ride locations are more dispersed, while casual riders tend to cluster near the lakeshore</li>
+</ul>
+<p>The map can be accessed <a href="./cyclistic-ride-map/" target="_blank">here</a>.</p>
+<p>Because the map is interactive, you can pan and zoom around to view specific areas.</p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_6_2b_membership_ride_location.png" class="img-fluid"></p>
+<p><img src="https://raw.githubusercontent.com/dylanbretzjr/cyclistic-data-analysis-case-study/refs/heads/main/viz/png/fig_6_2c_membership_ride_location.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="key-recommendations" class="level1">
+<h1>Key Recommendations</h1>
+<p>The results of this analysis support several key recommendations.</p>
+<section id="seasonality-1" class="level2">
+<h2 class="anchored" data-anchor-id="seasonality-1">1. Seasonality</h2>
+<p><strong>Insights:</strong></p>
+<ul>
+<li>Peak riding season during summer and early fall</li>
+<li>Higher proportion of casual riders during peak riding season</li>
+<li>Huge spike of casual riders in spring</li>
+</ul>
+<p><strong>Recommendation:</strong></p>
+<ul>
+<li>Increase marketing efforts in spring and summer</li>
+<li>Offer seasonal memberships to attract casual riders</li>
+</ul>
+</section>
+<section id="time-and-day" class="level2">
+<h2 class="anchored" data-anchor-id="time-and-day">2. Time and Day</h2>
+<p><strong>Insights:</strong></p>
+<ul>
+<li>Higher proportion of casual riders on weekends</li>
+<li>Casual rider activity is more dispersed across time and day</li>
+</ul>
+<p><strong>Recommendation:</strong></p>
+<ul>
+<li>Offer weekend-only memberships to attract casual weekend-only riders</li>
+<li>Offer optional packages during slow times/days</li>
+</ul>
+</section>
+<section id="location-1" class="level2">
+<h2 class="anchored" data-anchor-id="location-1">3. Location</h2>
+<p><strong>Insights:</strong></p>
+<ul>
+<li>Top start and end stations are consistent</li>
+<li>Casual riders tend to cluster near the lakeshore</li>
+</ul>
+<p><strong>Recommendation:</strong></p>
+<ul>
+<li>Target areas around the lakeshore and top stations for casual riders</li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>In this case study, I analyzed 12 months of bike-share trip data from Chicago to understand how <strong>annual members</strong> and <strong>casual riders</strong> use bikes differently.</p>
+<p>The results show clear, consistent differences:</p>
+<ul>
+<li><strong>Members</strong> account for most rides overall and show strong weekday commuter patterns, with clear peaks around 8 a.m. and 5 p.m.</li>
+<li><strong>Casual riders</strong> are more active during warmer months, ride more on weekends, take slightly longer trips, and account for a larger share of round trips, suggesting more leisure-oriented usage.</li>
+<li><strong>Geography differs significantly:</strong> Casual riders tend to cluster near the lakeshore, while members are more dispersed throughout the city.</li>
+</ul>
+<p>These findings support strategies focused on converting casual riders during peak riding season, offering weekend/seasonal membership options, and prioritizing areas with high casual rider volume.</p>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li><a href="https://docs.google.com/presentation/d/1QIhYy39x3hqI8Ahvh6gUQBD8TNX5YNHvGoN-5PVd13U/present#slide=id.g3b209955022_0_2985" target="_blank">Google Slides presentation</a></li>
+<li><a href="./cyclistic-ride-map/" target="_blank">Interactive ride location map</a></li>
+<li><a href="https://github.com/dylanbretzjr/cyclistic-data-analysis-case-study" target="_blank">GitHub repository</a></li>
+</ul>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/dylanbretzjr\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright © 2026 Dylan Bretz Jr.</p>
+</div>
+    <div class="nav-footer-right">
+<p>Powered by <a href="https://quarto.org"><iconify-icon role="img" inline="" icon="simple-icons:quarto" aria-label="Quarto Logo" title="Quarto Logo"></iconify-icon> Quarto</a> and <a href="https://docs.github.com/en/pages"><i class="bi bi-github"></i> GitHub Pages</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

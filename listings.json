@@ -1,6 +1,8 @@
 [
   {
     "listing": "/projects/index.html",
-    "items": []
+    "items": [
+      "/projects/cyclistic-case-study/index.html"
+    ]
   }
 ]
