@@ -5,7 +5,7 @@ about:
   links:
     - icon: linkedin
       text: LinkedIn
-      url: https://www.linkedin.com/in/dylan-bretz-b74311153/
+      url: https://www.linkedin.com/in/dylanbretzjr/
     - icon: github
       text: GitHub
       url: https://github.com/dylanbretzjr

@@ -24,7 +24,7 @@ website:
         text: Contact
     right:
       - icon: linkedin
-        url: https://www.linkedin.com/in/dylan-bretz-b74311153/
+        url: https://www.linkedin.com/in/dylanbretzjr/
       - icon: github
         url: https://github.com/dylanbretzjr
       - text: "{{< fa envelope >}}"
