@@ -6,7 +6,7 @@ project:
     - projects/**
 
 website:
-  #site-url: "https://www.dylanbretzjr.com"
+  #site-url: "https://dylanbretzjr.com/"
   title: "Dylan Bretz Jr."
   description: "Dylan Bretz Jr. is a musician and growing data professional dedicated to critical thinking and lifelong learning."
   favicon: /img/logo.svg
@@ -38,7 +38,7 @@ website:
   twitter-card: true
   open-graph: true
   back-to-top-navigation: true
-  #repo-url: https://github.com/dylanbretzjr/dylanbretzjr.github.io
+  #repo-url: https://github.com/dylanbretzjr/dylanbretzjr.github.io/
   #repo-actions: [edit, source, issue]
   #bread-crumbs: true
 
