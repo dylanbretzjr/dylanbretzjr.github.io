@@ -3,6 +3,7 @@ project:
   output-dir: docs
   resources:
     - CNAME
+    - projects/**
 
 website:
   #site-url: "https://www.dylanbretzjr.com"
@@ -30,10 +31,10 @@ website:
         url: mailto:dylanbretzjr@gmail.com
   page-footer:
     border: true
-    left: |
-      Powered by [{{< iconify simple-icons:quarto title="Quarto Logo" label="Quarto Logo" >}} Quarto](https://quarto.org) and [<i class="bi bi-github"></i> GitHub Pages](https://docs.github.com/en/pages).
     center: |
       Copyright © 2026 Dylan Bretz Jr.
+    right: |
+      Powered by [{{< iconify simple-icons:quarto title="Quarto Logo" label="Quarto Logo" >}} Quarto](https://quarto.org) and [<i class="bi bi-github"></i> GitHub Pages](https://docs.github.com/en/pages).
   twitter-card: true
   open-graph: true
   back-to-top-navigation: true
