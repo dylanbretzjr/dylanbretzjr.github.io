@@ -13,7 +13,14 @@ image: cyclistic_logo.png
 
 # Introduction
 
-In this case study, I used Python to analyze historical bike-share data from Chicago to understand **how different types of customers used bikes differently** and what those differences suggest for converting casual riders into annual members.
+For this case study, I analyzed 12 months of bike-share data from Chicago using Python to understand **how different types of customers used bikes differently** and what those differences suggest for converting **casual riders** into **annual members**.
+
+The analysis revealed key differences between members and casual riders:
+
+- **Members** take more rides overall and show strong weekday commute patterns, with peaks around 8 a.m. and 5 p.m.
+- **Casual riders** are most active during warmer months and on weekends, tend to take slightly longer trips, and cluster more near the lakeshore.
+
+These findings support strategies focused on converting casual riders during peak riding season, offering weekend/seasonal membership options, and targeting casual rider hotspots.
 
 **Project highlights:**
 
@@ -975,15 +982,14 @@ The results of this analysis support several key recommendations.
 
 # Conclusion
 
-In this case study, I analyzed 12 months of bike-share trip data from Chicago to understand how **annual members** and **casual riders** use bikes differently.
+In this case study, I analyzed 12 months of bike-share trip data from Chicago to understand how **annual members** and **casual riders** used bikes differently.
 
-The results show clear, consistent differences:
+The analysis revealed key differences between members and casual riders:
 
-- **Members** account for most rides overall and show strong weekday commuter patterns, with clear peaks around 8 a.m. and 5 p.m.
-- **Casual riders** are more active during warmer months, ride more on weekends, take slightly longer trips, and account for a larger share of round trips, suggesting more leisure-oriented usage.
-- **Geography differs significantly:** Casual riders tend to cluster near the lakeshore, while members are more dispersed throughout the city.
+- **Members** take more rides overall and show strong weekday commuter patterns, with peaks around 8 a.m. and 5 p.m.
+- **Casual riders** are most active during warmer months and on weekends, tend to take slightly longer trips, and cluster more near the lakeshore.
 
-These findings support strategies focused on converting casual riders during peak riding season, offering weekend/seasonal membership options, and prioritizing areas with high casual rider volume.
+These findings support strategies focused on converting casual riders during peak riding season, offering weekend/seasonal membership options, and targeting casual rider hotspots.
 
 **Deliverables:**
 
