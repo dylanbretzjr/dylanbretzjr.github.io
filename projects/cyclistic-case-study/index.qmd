@@ -5,7 +5,9 @@ date: "2026-01-19"
 categories:
   - case study
   - data analysis
+  - data visualization
   - python
+  - etl
 image: cyclistic_logo.png
 ---
 
