@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "contact.html",
-    "href": "contact.html",
-    "title": "Contact",
-    "section": "",
-    "text": "Thank you for visiting my site :)\nFeel free to send me a message if you’d like to connect!\n\n\n Back to top"
-  },
-  {
     "objectID": "projects/cyclistic-case-study/index.html#goal",
     "href": "projects/cyclistic-case-study/index.html#goal",
     "title": "Cyclistic Bike-Share Data Analysis with Python Case Study",
@@ -147,17 +140,24 @@
     "text": "3. Location\nInsights:\n\nTop start and end stations are consistent\nCasual riders tend to cluster near the lakeshore\n\nRecommendation:\n\nTarget areas around the lakeshore and top stations for casual riders"
   },
   {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "A collection of completed projects and case studies.\n\n\n\n\n\n\n\n\n\n\n\nCyclistic Bike-Share Data Analysis with Python Case Study\n\n\n\ncase study\n\ndata analysis\n\npython\n\n\n\n\n\n\n\n\n\n2026-01-19\n\n\nDylan Bretz Jr.\n\n24 min\n\n\n\n\nNo matching items\n\n\n\n\n\n Back to top"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Dylan Bretz Jr.",
     "section": "",
     "text": "Hello 👋\nMy name is Dylan :)\nI’m a musician, problem solver, and lifelong learner transitioning to data analytics.\nI bring a unique blend of analytical, creative, and critical thinking to everything I do.\nI’m currently building my portfolio, obtaining certifications, and refining my technical skills.\nI use Python, SQL, R, JavaScript, HTML/CSS, and Markdown, as well as spreadsheets and Tableau.\nI’m currently seeking Data Analyst roles (remote preferred).\nI’m based in Ohio but open to relocating (esp. to PNW 🌲).\nRecently completed:\n\nCyclistic Bike-Share Data Analysis with Python Case Study\nGoogle Data Analytics Professional Certificate\nGoogle Data Analysis with Python Specialization\nGoogle Data-Driven Decision Making Specialization\n\nOutside of work, I enjoy watching movies, listening to music, reading, spending time outdoors, and healthy living.\nThanks for stopping by—more coming soon!\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "A collection of completed projects and case studies.\n\n\n\n\n\n\n\n\n\n\n\nCyclistic Bike-Share Data Analysis with Python Case Study\n\n\n\ncase study\n\ndata analysis\n\ndata visualization\n\npython\n\netl\n\n\n\n\n\n\n\n\n\n2026-01-19\n\n\nDylan Bretz Jr.\n\n24 min\n\n\n\n\nNo matching items\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Contact",
+    "section": "",
+    "text": "Thank you for visiting my site :)\nFeel free to send me a message if you’d like to connect!\n\n\n Back to top"
   }
 ]

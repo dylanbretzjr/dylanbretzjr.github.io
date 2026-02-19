@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://dylanbretzjr.com/contact.html</loc>
-    <lastmod>2026-01-25T17:24:44.618Z</lastmod>
-  </url>
-  <url>
     <loc>https://dylanbretzjr.com/projects/cyclistic-case-study/index.html</loc>
-    <lastmod>2026-01-25T17:24:44.632Z</lastmod>
-  </url>
-  <url>
-    <loc>https://dylanbretzjr.com/projects/index.html</loc>
-    <lastmod>2026-01-25T17:24:44.632Z</lastmod>
+    <lastmod>2026-02-19T01:22:50.218Z</lastmod>
   </url>
   <url>
     <loc>https://dylanbretzjr.com/index.html</loc>
-    <lastmod>2026-01-25T17:24:44.630Z</lastmod>
+    <lastmod>2026-02-19T01:22:50.216Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dylanbretzjr.com/projects/index.html</loc>
+    <lastmod>2026-02-19T01:22:50.218Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dylanbretzjr.com/contact.html</loc>
+    <lastmod>2026-02-19T01:22:50.204Z</lastmod>
   </url>
 </urlset>
