@@ -38,6 +38,7 @@ I'm based in Ohio but open to relocating (esp. to PNW 🌲).
 
 **Recently completed:**
 
+- [Minecraft Villager Trading Database: System Design and Implementation](https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/)
 - [Cyclistic Bike-Share Data Analysis with Python Case Study](https://dylanbretzjr.com/projects/cyclistic-case-study/)
 - Google Data Analytics Professional Certificate
 - Google Data Analysis with Python Specialization
