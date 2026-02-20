@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Dylan Bretz Jr.">
+<meta name="dcterms.date" content="2026-02-20">
+
+<title>Minecraft Villager Trading Database: System Design and Implementation – Dylan Bretz Jr.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../..//img/logo.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-6ebf1c17ee52d4a41d24e1b861b6ca7f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9f790322540bfaeee81c3744168ecf0e.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-6ebf1c17ee52d4a41d24e1b861b6ca7f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6c1dfd964c87d51a04553e843f3b1bbb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-e34e31f47021e1da25b9e1274e957bd9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-6c1dfd964c87d51a04553e843f3b1bbb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/iconify-3.0.0/iconify-icon.min.js"></script>
+<link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Minecraft Villager Trading Database: System Design and Implementation – Dylan Bretz Jr.">
+<meta property="og:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
+<meta property="og:image" content="https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222384-thumbnail_xl.webp">
+<meta property="og:site_name" content="Dylan Bretz Jr.">
+<meta name="twitter:title" content="Minecraft Villager Trading Database: System Design and Implementation – Dylan Bretz Jr.">
+<meta name="twitter:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
+<meta name="twitter:image" content="https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222384-thumbnail_xl.webp">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const queryPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkModeDefault = queryPrefersDark.matches;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    queryPrefersDark.addEventListener("change", e => {
+      if(window.localStorage.getItem("quarto-color-scheme") !== null)
+        return;
+      const alternate = e.matches
+      toggleColorMode(alternate);
+      localAlternateSentinel = e.matches ? 'alternate' : 'default'; // this is used alongside local storage!
+      toggleGiscusIfUsed(alternate, darkModeDefault);
+    });
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Dylan Bretz Jr.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://docs.google.com/document/d/e/2PACX-1vRAPxM0I4u_5OEYcn9zzhkxiM-7RCJyFQUNOlqXw0qTFCNofu5yxJ2OIq2L44krB5LJjqXgAu4_gFSX/pub"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../contact.html"> 
+<span class="menu-text">Contact</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/dylanbretzjr/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/dylanbretzjr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="mailto:dylanbretzjr@gmail.com"> 
+<span class="menu-text"><i class="fa-solid fa-envelope" aria-label="envelope"></i></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">Background</a>
+  <ul class="collapse">
+  <li><a href="#villagers-and-trading-mechanics" id="toc-villagers-and-trading-mechanics" class="nav-link" data-scroll-target="#villagers-and-trading-mechanics">Villagers and Trading Mechanics</a></li>
+  <li><a href="#librarian-villagers" id="toc-librarian-villagers" class="nav-link" data-scroll-target="#librarian-villagers">Librarian Villagers</a></li>
+  <li><a href="#villager-trading-halls" id="toc-villager-trading-halls" class="nav-link" data-scroll-target="#villager-trading-halls">Villager Trading Halls</a></li>
+  <li><a href="#villager-trade-rebalance" id="toc-villager-trade-rebalance" class="nav-link" data-scroll-target="#villager-trade-rebalance">Villager Trade Rebalance</a></li>
+  </ul></li>
+  <li><a href="#database-design" id="toc-database-design" class="nav-link" data-scroll-target="#database-design">Database Design</a>
+  <ul class="collapse">
+  <li><a href="#spreadsheet-limitations" id="toc-spreadsheet-limitations" class="nav-link" data-scroll-target="#spreadsheet-limitations">Spreadsheet Limitations</a></li>
+  <li><a href="#database-normalization" id="toc-database-normalization" class="nav-link" data-scroll-target="#database-normalization">Database Normalization</a></li>
+  <li><a href="#database-schema" id="toc-database-schema" class="nav-link" data-scroll-target="#database-schema">Database Schema</a></li>
+  </ul></li>
+  <li><a href="#etl-pipeline-and-database-setup" id="toc-etl-pipeline-and-database-setup" class="nav-link" data-scroll-target="#etl-pipeline-and-database-setup">ETL Pipeline and Database Setup</a>
+  <ul class="collapse">
+  <li><a href="#data-source" id="toc-data-source" class="nav-link" data-scroll-target="#data-source">Data Source</a></li>
+  <li><a href="#extraction-transformation-and-loading" id="toc-extraction-transformation-and-loading" class="nav-link" data-scroll-target="#extraction-transformation-and-loading">Extraction, Transformation, and Loading</a></li>
+  <li><a href="#database-initialization" id="toc-database-initialization" class="nav-link" data-scroll-target="#database-initialization">Database Initialization</a></li>
+  </ul></li>
+  <li><a href="#data-entry-methods" id="toc-data-entry-methods" class="nav-link" data-scroll-target="#data-entry-methods">Data Entry Methods</a>
+  <ul class="collapse">
+  <li><a href="#manual-data-entry-sql" id="toc-manual-data-entry-sql" class="nav-link" data-scroll-target="#manual-data-entry-sql">Manual Data Entry (SQL)</a></li>
+  <li><a href="#cli-based-data-entry" id="toc-cli-based-data-entry" class="nav-link" data-scroll-target="#cli-based-data-entry">CLI-Based Data Entry</a></li>
+  </ul></li>
+  <li><a href="#analytical-query-examples" id="toc-analytical-query-examples" class="nav-link" data-scroll-target="#analytical-query-examples">Analytical Query Examples</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#ideas-for-the-future" id="toc-ideas-for-the-future" class="nav-link" data-scroll-target="#ideas-for-the-future">Ideas for the Future</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Minecraft Villager Trading Database: System Design and Implementation</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">minecraft</div>
+    <div class="quarto-category">data engineering</div>
+    <div class="quarto-category">database normalization</div>
+    <div class="quarto-category">rdbms</div>
+    <div class="quarto-category">sql</div>
+    <div class="quarto-category">sqlite</div>
+    <div class="quarto-category">python</div>
+    <div class="quarto-category">etl</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Dylan Bretz Jr. </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026-02-20</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222384-thumbnail_xl.webp" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Grand Exchange (Villager Trading Hall) Minecraft Map 1/2." width="750"></p>
+</figure>
+</div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>In this project, I built a <strong>SQLite-based relational database with Python ETL and CLI tools</strong> to track, manage, and optimize villager trading in Minecraft. While powerful, villager trading becomes difficult to manage at large scales due to the volume and variability of possible trades.</p>
+<p>This system replaces manual spreadsheet tracking with a structured relational database system that provides the following:</p>
+<ul>
+<li><strong>Automated Data Extraction</strong>—A custom ETL pipeline extracts game data directly from Minecraft’s source files, ensuring the database remains current with future updates.</li>
+<li><strong>High-Integrity Data Entry</strong>—An interactive CLI tool facilitates efficient data entry and input validation, ensuring records are consistent, accurate, and reliable.</li>
+<li><strong>Trade Optimization</strong>—SQL queries enable targeted analysis of trade data to compare offers, identify gaps, and support better trading decisions.</li>
+<li><strong>Scalable Architecture</strong>—A normalized relational database model supports expansion to additional villager professions, locations, and trade types without restructuring the system.</li>
+</ul>
+<p>By transitioning from a spreadsheet to a relational database, I developed a robust system that improves villager trade data management and supports better trading decisions.</p>
+<p>To view the full implementation and source code, visit <a href="https://github.com/dylanbretzjr/mc-trading-hall-db">this project’s repository</a> on GitHub.</p>
+</section>
+<section id="background" class="level1">
+<h1>Background</h1>
+<p>Having a basic understanding of villager trading in Minecraft provides helpful context for this project.</p>
+<section id="villagers-and-trading-mechanics" class="level2">
+<h2 class="anchored" data-anchor-id="villagers-and-trading-mechanics">Villagers and Trading Mechanics</h2>
+<p><a href="https://minecraft.wiki/w/Villager">Villagers</a> are non-playable characters that live in villages and can be assigned different <a href="https://minecraft.wiki/w/Villager_professions">professions</a>, such as armorer, farmer, or librarian. Players can trade with villagers that have a profession using emeralds as currency to buy and sell items.</p>
+<p>Each villager starts out with a limited number of trades, and additional trades can be unlocked through repeated trading. Trades are randomly selected from a set of possible offers specific to each profession.</p>
+</section>
+<section id="librarian-villagers" class="level2">
+<h2 class="anchored" data-anchor-id="librarian-villagers">Librarian Villagers</h2>
+<p>One of the most valuable professions is the <a href="https://minecraft.wiki/w/Librarian">librarian</a>. Not only can you easily get lots of emeralds by selling them paper, but you can also buy enchanted books, which are used to enhance armor, tools, and weapons. Having a good supply of emeralds and enchanted books can be a real game changer, which makes trading with librarians very useful.</p>
+<p>However, finding a librarian with a specific enchantment can be <em>tedious</em> (<a href="https://www.reddit.com/r/Minecraft/comments/1039ybr/i_hate_librarians/" title="r/Minecraft | &quot;I hate librarians&quot;">if you know, you know</a>).</p>
+<p>Currently, librarian enchanted book trades are randomly selected from a <a href="https://minecraft.wiki/w/Enchanting#Summary_of_enchantments">set of 40 enchantments</a>, and each librarian can offer up to 4 enchanted book trades. In addition, both the enchantment level and the cost in emeralds are randomly determined.</p>
+<p>As a result, obtaining high-level enchantments at reasonable prices often requires cycling through and retaining many librarians. While desirable trades can be locked in once found, managing multiple librarians and their offers quickly becomes difficult as their numbers grow.</p>
+</section>
+<section id="villager-trading-halls" class="level2">
+<h2 class="anchored" data-anchor-id="villager-trading-halls">Villager Trading Halls</h2>
+<p>To manage large numbers of villagers, players often build <strong>villager trading halls</strong>, which are dedicated structures designed to house and organize many villagers in a centralized location.</p>
+<p><img src="https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222315_xl.webp" class="img-fluid quarto-figure quarto-figure-center" alt="Grand Exchange (Villager Trading Hall) Minecraft Map 2/2." width="750"><br></p>
+<p>A trading hall may contain dozens of villagers across multiple professions, each offering multiple trades. While the physical organization improves accessibility, it does not address the underlying information management challenge.</p>
+<p>Players still need to remember…</p>
+<ul>
+<li>which villager offers which trade,</li>
+<li>where that villager is located,</li>
+<li>and whether a better trade exists elsewhere.</li>
+</ul>
+<p>As the number of villagers increases, manually tracking this information becomes impractical. The operational challenges of high volume, random variability, and frequent cross-referencing motivated the need for a structured, queryable database system.</p>
+</section>
+<section id="villager-trade-rebalance" class="level2">
+<h2 class="anchored" data-anchor-id="villager-trade-rebalance">Villager Trade Rebalance</h2>
+<p>It should be noted that this project is designed around standard Minecraft mechanics. The <a href="https://minecraft.wiki/w/Villager_Trade_Rebalance">Villager Trade Rebalance</a> is an optional experimental feature that significantly alters the villager trading mechanics. Since this feature is disabled in my world, it falls outside the scope of this project. Supporting this feature would require substantial changes to the database schema and logic.</p>
+</section>
+</section>
+<section id="database-design" class="level1">
+<h1>Database Design</h1>
+<p>To better manage the tracking and analysis of villagers and their trade offers, I transitioned from a spreadsheet-based workflow to a relational database. This section explains the design considerations behind that decision, including the limitations of spreadsheets, the normalization strategy, and the resulting database schema.</p>
+<section id="spreadsheet-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="spreadsheet-limitations">Spreadsheet Limitations</h2>
+<p>Initially, I tracked librarian trades in a spreadsheet. While manageable at small scales, this approach became increasingly difficult to maintain as the number of villagers and trades grew.</p>
+<p>The workflow required frequent cross-referencing to answer questions, such as which enchantments were missing, where a specific trade was located, or whether a better offer existed. Because related information was stored across multiple sheets, this process involved manual filtering and comparison.</p>
+<p>In addition, repeated text values, such as enchantment names, villager IDs, and locations, increased the risk of inconsistencies and data entry errors. As the dataset expanded, the spreadsheet also became slower to navigate and more difficult to maintain.</p>
+<p>To address these limitations, I implemented a relational database management system (RDBMS), creating a structured and scalable solution for managing the data and supporting ongoing analysis.</p>
+</section>
+<section id="database-normalization" class="level2">
+<h2 class="anchored" data-anchor-id="database-normalization">Database Normalization</h2>
+<p>The database was designed using normalization principles to reduce redundancy and improve data integrity.</p>
+<p>Rather than storing all information in a single table, core entities, such as enchantments, professions, locations, and villagers, are separated into dedicated tables. Relationships between these entities are maintained using foreign keys, allowing trade records to reference standardized values instead of repeating text fields.</p>
+<p>This structure supports one-to-many relationships (for example, a location can contain many villagers, and a villager can offer multiple trades) while ensuring that updates to reference data only need to be made in one place. The result is a more consistent, maintainable dataset that supports efficient querying.</p>
+</section>
+<section id="database-schema" class="level2">
+<h2 class="anchored" data-anchor-id="database-schema">Database Schema</h2>
+<p>The schema separates related data into distinct tables.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 84%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Table</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>enchantments</code></td>
+<td>Contains all tradeable enchantments, including their maximum level and supported item types</td>
+</tr>
+<tr class="even">
+<td><code>jobs</code></td>
+<td>Contains all possible villager professions in the game</td>
+</tr>
+<tr class="odd">
+<td><code>locations</code></td>
+<td>Stores trading hall names and their coordinates</td>
+</tr>
+<tr class="even">
+<td><code>villagers</code></td>
+<td>Stores unique villager IDs and links each to a location and profession</td>
+</tr>
+<tr class="odd">
+<td><code>librarian_trades</code></td>
+<td>Stores individual enchanted book offers for each librarian, including the enchantment level and cost</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>enchantments</code> and <code>jobs</code> tables are populated from Minecraft’s source files through the ETL process, while the remaining tables store data that is manually entered for new locations, villagers, and trade offers.</p>
+<p>This structure supports efficient analysis and can be extended to additional villager professions as the system grows.</p>
+</section>
+</section>
+<section id="etl-pipeline-and-database-setup" class="level1">
+<h1>ETL Pipeline and Database Setup</h1>
+<p>To ensure the database remains accurate and up to date, I built a custom Python-based ETL pipeline that automatically extracts, transforms, and loads reference data directly from Minecraft’s source files. This approach replaces the need to manually enter or maintain this information and enables the <code>enchantments</code> and <code>jobs</code> tables to be updated whenever a new version of the game is released.</p>
+<section id="data-source" class="level2">
+<h2 class="anchored" data-anchor-id="data-source">Data Source</h2>
+<p>Minecraft release metadata is accessible through a public <a href="https://piston-meta.mojang.com/mc/game/version_manifest.json">version manifest</a>, which provides information for each release. Each release entry links to version-specific metadata, including the download location for the corresponding <code>client.jar</code> archive. This archive contains structured data that define core gameplay elements, such as enchantments and villager professions.</p>
+<p>Since these files are distributed and maintained directly by the game developer, they provide an accurate and reliable source of reference data.</p>
+</section>
+<section id="extraction-transformation-and-loading" class="level2">
+<h2 class="anchored" data-anchor-id="extraction-transformation-and-loading">Extraction, Transformation, and Loading</h2>
+<p>The ETL (extract, transform, load) process begins by retrieving the version manifest and identifying the most recent stable release. The corresponding <code>client.jar</code> archive is then downloaded, and its contents are extracted.</p>
+<p>Information about enchantments and villager professions is stored across multiple JSON files within the archive. These files are then located and parsed to extract the relevant reference data.</p>
+<p>For enchantments, the data is filtered to include only those that can be obtained through villager trading, and the enchantment, its maximum level, and the supported item type are loaded into the <code>enchantments</code> table. Similarly, the full list of villager professions is loaded into the <code>jobs</code> table.</p>
+<p>Since this process is automated, the reference data can be updated with new releases, ensuring the database remains current.</p>
+</section>
+<section id="database-initialization" class="level2">
+<h2 class="anchored" data-anchor-id="database-initialization">Database Initialization</h2>
+<p>After loading the reference data, I created the remaining tables using SQL to store information about trading hall locations, villagers, and their trade offers.</p>
+<p>The <code>locations</code> table stores the names of trading halls and their coordinates:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> locations (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    location TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    x_coord <span class="dt">INTEGER</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    z_coord <span class="dt">INTEGER</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>villagers</code> table records individual villagers and links each one to a location and profession:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> villagers (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    villager_id TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    location TEXT,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    job TEXT,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(location) <span class="kw">REFERENCES</span> locations(location),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(job) <span class="kw">REFERENCES</span> jobs(job)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>librarian_trades</code> table records individual enchanted book offers, linking a villager to an enchantment and storing the associated level and emerald cost:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> librarian_trades (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    trade_id <span class="dt">INTEGER</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span> AUTOINCREMENT,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    villager_id TEXT,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    enchantment TEXT,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    enchantment_level <span class="dt">INTEGER</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    cost_emeralds <span class="dt">INTEGER</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(villager_id) <span class="kw">REFERENCES</span> villagers(villager_id),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(enchantment) <span class="kw">REFERENCES</span> enchantments(enchantment)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Foreign key constraints enforce referential integrity by ensuring that villagers reference valid locations and professions and that trade records reference valid villagers and enchantments.</p>
+</section>
+</section>
+<section id="data-entry-methods" class="level1">
+<h1>Data Entry Methods</h1>
+<p>With the database structure in place, the remaining workflow involves recording trading hall locations, villagers, and their trade offers. This data can be entered directly using SQL or through a custom command-line interface (CLI) designed to improve efficiency and validate inputs.</p>
+<section id="manual-data-entry-sql" class="level2">
+<h2 class="anchored" data-anchor-id="manual-data-entry-sql">Manual Data Entry (SQL)</h2>
+<p>New records can be entered directly using standard SQL statements.</p>
+<p><strong>Add a new trading hall with location coordinates:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> locations</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'spawn'</span>, <span class="dv">250</span>, <span class="op">-</span><span class="dv">45</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Add new villagers, their trading halls, and their professions:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> villagers</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'spa001'</span>, <span class="st">'spawn'</span>, <span class="st">'librarian'</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'spa002'</span>, <span class="st">'spawn'</span>, <span class="st">'librarian'</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'spa003'</span>, <span class="st">'spawn'</span>, <span class="st">'librarian'</span>),[<span class="op">..</span>.];</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Add new librarian enchanted book trades, including enchantment level and cost:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> librarian_trades (</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    villager_id,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    enchantment,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    enchantment_level,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    cost_emeralds</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'spa001'</span>, <span class="st">'thorns'</span>, <span class="dv">3</span>, <span class="dv">24</span>),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'spa001'</span>, <span class="st">'quick_charge'</span>, <span class="dv">3</span>, <span class="dv">38</span>),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'spa001'</span>, <span class="st">'looting'</span>, <span class="dv">1</span>, <span class="dv">5</span>),[<span class="op">..</span>.];</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>While this approach provides full control, it is inefficient for routine use. Entering multiple trades requires repeated statements, manual validation, and careful attention to formatting and constraints. As the dataset grows, the process becomes time-consuming and increases the risk of entry errors.</p>
+</section>
+<section id="cli-based-data-entry" class="level2">
+<h2 class="anchored" data-anchor-id="cli-based-data-entry">CLI-Based Data Entry</h2>
+<p>To support ongoing use, I developed an interactive Python-based CLI to streamline and standardize librarian trade entry.</p>
+<p>The CLI provides a structured workflow that reduces repetitive input by retaining the current location or villager context when multiple trades are entered. Validation during data entry ensures inputs are valid, prevents duplicate or inconsistent records, and enforces constraints such as a limit of four enchanted book offers per librarian.</p>
+</section>
+</section>
+<section id="analytical-query-examples" class="level1">
+<h1>Analytical Query Examples</h1>
+<p>With the database populated, SQL queries can be used to answer practical questions that support everyday trading decisions. Instead of manually searching through villagers, queries make it possible to quickly locate specific offers, identify missing trades, and compare trades across the database.</p>
+<p>The following examples demonstrate how the database can be used to answer common trading questions.</p>
+<p><strong>View all trades for a specific librarian:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> librarian_trades</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> villager_id <span class="op">=</span> <span class="st">'spa001'</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Identify missing max-level enchanted book trades:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> e.enchantment, e.max_level</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> enchantments e</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> e.enchantment <span class="kw">NOT</span> <span class="kw">IN</span> (</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> t.enchantment</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> librarian_trades t</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> enchantments e2 <span class="kw">ON</span> t.enchantment <span class="op">=</span> e2.enchantment</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> t.enchantment_level <span class="op">=</span> e2.max_level</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> e.enchantment;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>This query helps identify which max-level enchanted book trades are still missing.</em></p>
+<p><strong>Identify librarians who do not offer any max-level enchantments:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> v.villager_id, v.location</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> villagers v</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> v.job <span class="op">=</span> <span class="st">'librarian'</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">AND</span> v.villager_id <span class="kw">NOT</span> <span class="kw">IN</span> (</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> t.villager_id</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> librarian_trades t</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> enchantments e <span class="kw">ON</span> t.enchantment <span class="op">=</span> e.enchantment</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> t.enchantment_level <span class="op">=</span> e.max_level</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>This query helps determine which librarians may not be worth keeping.</em></p>
+<p><strong>Identify the best available trade for each enchantment (highest level, lowest cost):</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> BestTrades <span class="kw">AS</span> (</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        t.enchantment,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        t.enchantment_level,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        t.cost_emeralds,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        t.villager_id,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        v.location,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>            <span class="kw">PARTITION</span> <span class="kw">BY</span> t.enchantment </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>            <span class="kw">ORDER</span> <span class="kw">BY</span> t.enchantment_level <span class="kw">DESC</span>, t.cost_emeralds <span class="kw">ASC</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        ) <span class="kw">as</span> <span class="fu">rank</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> librarian_trades t</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> villagers v <span class="kw">ON</span> t.villager_id <span class="op">=</span> v.villager_id</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    enchantment,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    enchantment_level <span class="kw">AS</span> <span class="kw">level</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    cost_emeralds <span class="kw">AS</span> <span class="kw">cost</span>,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    villager_id,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    location</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> BestTrades</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="fu">rank</span> <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> enchantment;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>This project replaces manual spreadsheet tracking with a relational database system for managing villager trades in Minecraft. By combining automated reference data extraction, validated data entry, and targeted SQL analysis, it provides a reliable and scalable foundation for maintaining trade information and supporting informed decision making.</p>
+<section id="ideas-for-the-future" class="level2">
+<h2 class="anchored" data-anchor-id="ideas-for-the-future">Ideas for the Future</h2>
+<p>In a follow-up project, I plan to build on this system with several enhancements:</p>
+<ul>
+<li><strong>Support for additional villager professions</strong>—Extend tracking and analysis to professions such as armorers, toolsmiths, and weaponsmiths, where item quality and pricing variability also affect trade value.</li>
+<li><strong>CLI tool for updating existing trades</strong>—Support updating existing trade records to reflect discounted prices from <a href="https://minecraft.wiki/w/Zombie_Villager#Curing">curing zombified villagers</a>.</li>
+<li><strong>ETL pipeline version awareness</strong>—Detect when the game version changes and update the <code>enchantments</code> and <code>jobs</code> tables only if the relevant game data has changed.</li>
+<li><strong>Villager scoring model</strong>—Introduce a scoring framework that evaluates villagers based on factors such as trade quality, cost, and relative rarity to help prioritize which to keep or replace.</li>
+<li><strong>Interactive visual dashboard</strong>—Provide a graphical interface for exploring trades, viewing villagers, and quickly identifying high-value offers.</li>
+</ul>
+<p>Together, these improvements would transform the system into a more robust tool for managing and optimizing villager trading in Minecraft.</p>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/dylanbretzjr\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright © 2026 Dylan Bretz Jr.</p>
+</div>
+    <div class="nav-footer-right">
+<p>Powered by <a href="https://quarto.org"><iconify-icon role="img" inline="" icon="simple-icons:quarto" aria-label="Quarto Logo" title="Quarto Logo"></iconify-icon> Quarto</a> and <a href="https://docs.github.com/en/pages"><i class="bi bi-github"></i> GitHub Pages</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

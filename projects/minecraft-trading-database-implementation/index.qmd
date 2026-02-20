@@ -1,0 +1,313 @@
+---
+title: "Minecraft Villager Trading Database: System Design and Implementation"
+slug: "minecraft-trading-database-implementation"
+author: "Dylan Bretz Jr."
+date: "2026-02-20"
+categories:
+  - minecraft
+  - data engineering
+  - database normalization
+  - rdbms
+  - sql
+  - sqlite
+  - python
+  - etl
+image: https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222384-thumbnail_xl.webp
+---
+
+![]({{< meta image >}}){fig-alt="Grand Exchange (Villager Trading Hall) Minecraft Map 1/2." fig-align="center" width="750px"}
+
+# Introduction
+
+In this project, I built a **SQLite-based relational database with Python ETL and CLI tools** to track, manage, and optimize villager trading in Minecraft. While powerful, villager trading becomes difficult to manage at large scales due to the volume and variability of possible trades.
+
+This system replaces manual spreadsheet tracking with a structured relational database system that provides the following:
+
+- **Automated Data Extraction**---A custom ETL pipeline extracts game data directly from Minecraft's source files, ensuring the database remains current with future updates.
+- **High-Integrity Data Entry**---An interactive CLI tool facilitates efficient data entry and input validation, ensuring records are consistent, accurate, and reliable.
+- **Trade Optimization**---SQL queries enable targeted analysis of trade data to compare offers, identify gaps, and support better trading decisions.
+- **Scalable Architecture**---A normalized relational database model supports expansion to additional villager professions, locations, and trade types without restructuring the system.
+
+By transitioning from a spreadsheet to a relational database, I developed a robust system that improves villager trade data management and supports better trading decisions.
+
+To view the full implementation and source code, visit [this project's repository](https://github.com/dylanbretzjr/mc-trading-hall-db) on GitHub.
+
+# Background
+
+Having a basic understanding of villager trading in Minecraft provides helpful context for this project.
+
+## Villagers and Trading Mechanics
+
+[Villagers](https://minecraft.wiki/w/Villager) are non-playable characters that live in villages and can be assigned different [professions](https://minecraft.wiki/w/Villager_professions), such as armorer, farmer, or librarian. Players can trade with villagers that have a profession using emeralds as currency to buy and sell items.
+
+Each villager starts out with a limited number of trades, and additional trades can be unlocked through repeated trading. Trades are randomly selected from a set of possible offers specific to each profession.
+
+## Librarian Villagers
+
+One of the most valuable professions is the [librarian](https://minecraft.wiki/w/Librarian). Not only can you easily get lots of emeralds by selling them paper, but you can also buy enchanted books, which are used to enhance armor, tools, and weapons. Having a good supply of emeralds and enchanted books can be a real game changer, which makes trading with librarians very useful.
+
+However, finding a librarian with a specific enchantment can be _tedious_ ([if you know, you know](https://www.reddit.com/r/Minecraft/comments/1039ybr/i_hate_librarians/ 'r/Minecraft | "I hate librarians"')).
+
+Currently, librarian enchanted book trades are randomly selected from a [set of 40 enchantments](https://minecraft.wiki/w/Enchanting#Summary_of_enchantments), and each librarian can offer up to 4 enchanted book trades. In addition, both the enchantment level and the cost in emeralds are randomly determined.
+
+As a result, obtaining high-level enchantments at reasonable prices often requires cycling through and retaining many librarians. While desirable trades can be locked in once found, managing multiple librarians and their offers quickly becomes difficult as their numbers grow.
+
+## Villager Trading Halls
+
+To manage large numbers of villagers, players often build **villager trading halls**, which are dedicated structures designed to house and organize many villagers in a centralized location.
+
+![](https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222315_xl.webp){fig-alt="Grand Exchange (Villager Trading Hall) Minecraft Map 2/2." fig-align="center" width="750px"}<br>
+
+A trading hall may contain dozens of villagers across multiple professions, each offering multiple trades. While the physical organization improves accessibility, it does not address the underlying information management challenge.
+
+Players still need to remember...
+
+- which villager offers which trade,
+- where that villager is located,
+- and whether a better trade exists elsewhere.
+
+As the number of villagers increases, manually tracking this information becomes impractical. The operational challenges of high volume, random variability, and frequent cross-referencing motivated the need for a structured, queryable database system.
+
+## Villager Trade Rebalance
+
+It should be noted that this project is designed around standard Minecraft mechanics. The [Villager Trade Rebalance](https://minecraft.wiki/w/Villager_Trade_Rebalance) is an optional experimental feature that significantly alters the villager trading mechanics. Since this feature is disabled in my world, it falls outside the scope of this project. Supporting this feature would require substantial changes to the database schema and logic.
+
+# Database Design
+
+To better manage the tracking and analysis of villagers and their trade offers, I transitioned from a spreadsheet-based workflow to a relational database. This section explains the design considerations behind that decision, including the limitations of spreadsheets, the normalization strategy, and the resulting database schema.
+
+## Spreadsheet Limitations
+
+Initially, I tracked librarian trades in a spreadsheet. While manageable at small scales, this approach became increasingly difficult to maintain as the number of villagers and trades grew.
+
+The workflow required frequent cross-referencing to answer questions, such as which enchantments were missing, where a specific trade was located, or whether a better offer existed. Because related information was stored across multiple sheets, this process involved manual filtering and comparison.
+
+In addition, repeated text values, such as enchantment names, villager IDs, and locations, increased the risk of inconsistencies and data entry errors. As the dataset expanded, the spreadsheet also became slower to navigate and more difficult to maintain.
+
+To address these limitations, I implemented a relational database management system (RDBMS), creating a structured and scalable solution for managing the data and supporting ongoing analysis.
+
+## Database Normalization
+
+The database was designed using normalization principles to reduce redundancy and improve data integrity.
+
+Rather than storing all information in a single table, core entities, such as enchantments, professions, locations, and villagers, are separated into dedicated tables. Relationships between these entities are maintained using foreign keys, allowing trade records to reference standardized values instead of repeating text fields.
+
+This structure supports one-to-many relationships (for example, a location can contain many villagers, and a villager can offer multiple trades) while ensuring that updates to reference data only need to be made in one place. The result is a more consistent, maintainable dataset that supports efficient querying.
+
+## Database Schema
+
+The schema separates related data into distinct tables.
+
+| Table              | Description                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| `enchantments`     | Contains all tradeable enchantments, including their maximum level and supported item types          |
+| `jobs`             | Contains all possible villager professions in the game                                               |
+| `locations`        | Stores trading hall names and their coordinates                                                      |
+| `villagers`        | Stores unique villager IDs and links each to a location and profession                               |
+| `librarian_trades` | Stores individual enchanted book offers for each librarian, including the enchantment level and cost |
+
+The `enchantments` and `jobs` tables are populated from Minecraft’s source files through the ETL process, while the remaining tables store data that is manually entered for new locations, villagers, and trade offers.
+
+This structure supports efficient analysis and can be extended to additional villager professions as the system grows.
+
+# ETL Pipeline and Database Setup
+
+To ensure the database remains accurate and up to date, I built a custom Python-based ETL pipeline that automatically extracts, transforms, and loads reference data directly from Minecraft's source files. This approach replaces the need to manually enter or maintain this information and enables the `enchantments` and `jobs` tables to be updated whenever a new version of the game is released.
+
+## Data Source
+
+Minecraft release metadata is accessible through a public [version manifest](https://piston-meta.mojang.com/mc/game/version_manifest.json), which provides information for each release. Each release entry links to version-specific metadata, including the download location for the corresponding `client.jar` archive. This archive contains structured data that define core gameplay elements, such as enchantments and villager professions.
+
+Since these files are distributed and maintained directly by the game developer, they provide an accurate and reliable source of reference data.
+
+## Extraction, Transformation, and Loading
+
+The ETL (extract, transform, load) process begins by retrieving the version manifest and identifying the most recent stable release. The corresponding `client.jar` archive is then downloaded, and its contents are extracted.
+
+Information about enchantments and villager professions is stored across multiple JSON files within the archive. These files are then located and parsed to extract the relevant reference data.
+
+For enchantments, the data is filtered to include only those that can be obtained through villager trading, and the enchantment, its maximum level, and the supported item type are loaded into the `enchantments` table. Similarly, the full list of villager professions is loaded into the `jobs` table.
+
+Since this process is automated, the reference data can be updated with new releases, ensuring the database remains current.
+
+## Database Initialization
+
+After loading the reference data, I created the remaining tables using SQL to store information about trading hall locations, villagers, and their trade offers.
+
+The `locations` table stores the names of trading halls and their coordinates:
+
+```sql
+CREATE TABLE IF NOT EXISTS locations (
+	location TEXT PRIMARY KEY,
+	x_coord INTEGER,
+	z_coord INTEGER
+);
+```
+
+The `villagers` table records individual villagers and links each one to a location and profession:
+
+```sql
+CREATE TABLE IF NOT EXISTS villagers (
+	villager_id TEXT PRIMARY KEY,
+	location TEXT,
+	job TEXT,
+
+	FOREIGN KEY(location) REFERENCES locations(location),
+	FOREIGN KEY(job) REFERENCES jobs(job)
+);
+```
+
+The `librarian_trades` table records individual enchanted book offers, linking a villager to an enchantment and storing the associated level and emerald cost:
+
+```sql
+CREATE TABLE IF NOT EXISTS librarian_trades (
+	trade_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	villager_id TEXT,
+	enchantment TEXT,
+	enchantment_level INTEGER,
+	cost_emeralds INTEGER,
+
+	FOREIGN KEY(villager_id) REFERENCES villagers(villager_id),
+	FOREIGN KEY(enchantment) REFERENCES enchantments(enchantment)
+);
+```
+
+Foreign key constraints enforce referential integrity by ensuring that villagers reference valid locations and professions and that trade records reference valid villagers and enchantments.
+
+# Data Entry Methods
+
+With the database structure in place, the remaining workflow involves recording trading hall locations, villagers, and their trade offers. This data can be entered directly using SQL or through a custom command-line interface (CLI) designed to improve efficiency and validate inputs.
+
+## Manual Data Entry (SQL)
+
+New records can be entered directly using standard SQL statements.
+
+**Add a new trading hall with location coordinates:**
+
+```sql
+INSERT INTO locations
+VALUES
+	('spawn', 250, -45);
+```
+
+**Add new villagers, their trading halls, and their professions:**
+
+```sql
+INSERT INTO villagers
+VALUES
+	('spa001', 'spawn', 'librarian'),
+	('spa002', 'spawn', 'librarian'),
+	('spa003', 'spawn', 'librarian'),[...];
+```
+
+**Add new librarian enchanted book trades, including enchantment level and cost:**
+
+```sql
+INSERT INTO librarian_trades (
+	villager_id,
+	enchantment,
+	enchantment_level,
+	cost_emeralds
+)
+VALUES
+	('spa001', 'thorns', 3, 24),
+	('spa001', 'quick_charge', 3, 38),
+	('spa001', 'looting', 1, 5),[...];
+```
+
+While this approach provides full control, it is inefficient for routine use. Entering multiple trades requires repeated statements, manual validation, and careful attention to formatting and constraints. As the dataset grows, the process becomes time-consuming and increases the risk of entry errors.
+
+## CLI-Based Data Entry
+
+To support ongoing use, I developed an interactive Python-based CLI to streamline and standardize librarian trade entry.
+
+The CLI provides a structured workflow that reduces repetitive input by retaining the current location or villager context when multiple trades are entered. Validation during data entry ensures inputs are valid, prevents duplicate or inconsistent records, and enforces constraints such as a limit of four enchanted book offers per librarian.
+
+# Analytical Query Examples
+
+With the database populated, SQL queries can be used to answer practical questions that support everyday trading decisions. Instead of manually searching through villagers, queries make it possible to quickly locate specific offers, identify missing trades, and compare trades across the database.
+
+The following examples demonstrate how the database can be used to answer common trading questions.
+
+**View all trades for a specific librarian:**
+
+```sql
+SELECT * FROM librarian_trades
+WHERE villager_id = 'spa001';
+```
+
+**Identify missing max-level enchanted book trades:**
+
+```sql
+SELECT e.enchantment, e.max_level
+FROM enchantments e
+WHERE e.enchantment NOT IN (
+    SELECT t.enchantment
+    FROM librarian_trades t
+    JOIN enchantments e2 ON t.enchantment = e2.enchantment
+    WHERE t.enchantment_level = e2.max_level
+)
+ORDER BY e.enchantment;
+```
+
+_This query helps identify which max-level enchanted book trades are still missing._
+
+**Identify librarians who do not offer any max-level enchantments:**
+
+```sql
+SELECT v.villager_id, v.location
+FROM villagers v
+WHERE v.job = 'librarian'
+AND v.villager_id NOT IN (
+    SELECT t.villager_id
+    FROM librarian_trades t
+    JOIN enchantments e ON t.enchantment = e.enchantment
+    WHERE t.enchantment_level = e.max_level
+);
+```
+
+_This query helps determine which librarians may not be worth keeping._
+
+**Identify the best available trade for each enchantment (highest level, lowest cost):**
+
+```sql
+WITH BestTrades AS (
+    SELECT 
+        t.enchantment,
+        t.enchantment_level,
+        t.cost_emeralds,
+        t.villager_id,
+        v.location,
+        ROW_NUMBER() OVER (
+            PARTITION BY t.enchantment 
+            ORDER BY t.enchantment_level DESC, t.cost_emeralds ASC
+        ) as rank
+    FROM librarian_trades t
+    JOIN villagers v ON t.villager_id = v.villager_id
+)
+SELECT 
+    enchantment,
+    enchantment_level AS level,
+    cost_emeralds AS cost,
+    villager_id,
+    location
+FROM BestTrades
+WHERE rank = 1
+ORDER BY enchantment;
+```
+
+# Conclusion
+
+This project replaces manual spreadsheet tracking with a relational database system for managing villager trades in Minecraft. By combining automated reference data extraction, validated data entry, and targeted SQL analysis, it provides a reliable and scalable foundation for maintaining trade information and supporting informed decision making.
+
+## Ideas for the Future
+
+In a follow-up project, I plan to build on this system with several enhancements:
+
+- **Support for additional villager professions**---Extend tracking and analysis to professions such as armorers, toolsmiths, and weaponsmiths, where item quality and pricing variability also affect trade value.
+- **CLI tool for updating existing trades**---Support updating existing trade records to reflect discounted prices from [curing zombified villagers](https://minecraft.wiki/w/Zombie_Villager#Curing).
+- **ETL pipeline version awareness**---Detect when the game version changes and update the `enchantments` and `jobs` tables only if the relevant game data has changed.
+- **Villager scoring model**---Introduce a scoring framework that evaluates villagers based on factors such as trade quality, cost, and relative rarity to help prioritize which to keep or replace.
+- **Interactive visual dashboard**---Provide a graphical interface for exploring trades, viewing villagers, and quickly identifying high-value offers.
+
+Together, these improvements would transform the system into a more robust tool for managing and optimizing villager trading in Minecraft.

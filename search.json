@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Contact",
+    "section": "",
+    "text": "Thank you for visiting my site :)\nFeel free to send me a message if you’d like to connect!\n\n\n Back to top"
+  },
+  {
     "objectID": "projects/cyclistic-case-study/index.html#goal",
     "href": "projects/cyclistic-case-study/index.html#goal",
     "title": "Cyclistic Bike-Share Data Analysis with Python Case Study",
@@ -140,24 +147,108 @@
     "text": "3. Location\nInsights:\n\nTop start and end stations are consistent\nCasual riders tend to cluster near the lakeshore\n\nRecommendation:\n\nTarget areas around the lakeshore and top stations for casual riders"
   },
   {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "A collection of completed projects and case studies.\n\n\n\n\n\n\n\n\n\n\n\nMinecraft Villager Trading Database: System Design and Implementation\n\n\n\nminecraft\n\ndata engineering\n\ndatabase normalization\n\nrdbms\n\nsql\n\nsqlite\n\npython\n\netl\n\n\n\n\n\n\n\n\n\n2026-02-20\n\n\nDylan Bretz Jr.\n\n13 min\n\n\n\n\n\n\n\n\n\n\n\nCyclistic Bike-Share Data Analysis with Python Case Study\n\n\n\ncase study\n\ndata analysis\n\ndata visualization\n\npython\n\netl\n\n\n\n\n\n\n\n\n\n2026-01-19\n\n\nDylan Bretz Jr.\n\n24 min\n\n\n\n\nNo matching items\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#villagers-and-trading-mechanics",
+    "href": "projects/minecraft-trading-database-implementation/index.html#villagers-and-trading-mechanics",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Villagers and Trading Mechanics",
+    "text": "Villagers and Trading Mechanics\nVillagers are non-playable characters that live in villages and can be assigned different professions, such as armorer, farmer, or librarian. Players can trade with villagers that have a profession using emeralds as currency to buy and sell items.\nEach villager starts out with a limited number of trades, and additional trades can be unlocked through repeated trading. Trades are randomly selected from a set of possible offers specific to each profession."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#librarian-villagers",
+    "href": "projects/minecraft-trading-database-implementation/index.html#librarian-villagers",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Librarian Villagers",
+    "text": "Librarian Villagers\nOne of the most valuable professions is the librarian. Not only can you easily get lots of emeralds by selling them paper, but you can also buy enchanted books, which are used to enhance armor, tools, and weapons. Having a good supply of emeralds and enchanted books can be a real game changer, which makes trading with librarians very useful.\nHowever, finding a librarian with a specific enchantment can be tedious (if you know, you know).\nCurrently, librarian enchanted book trades are randomly selected from a set of 40 enchantments, and each librarian can offer up to 4 enchanted book trades. In addition, both the enchantment level and the cost in emeralds are randomly determined.\nAs a result, obtaining high-level enchantments at reasonable prices often requires cycling through and retaining many librarians. While desirable trades can be locked in once found, managing multiple librarians and their offers quickly becomes difficult as their numbers grow."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#villager-trading-halls",
+    "href": "projects/minecraft-trading-database-implementation/index.html#villager-trading-halls",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Villager Trading Halls",
+    "text": "Villager Trading Halls\nTo manage large numbers of villagers, players often build villager trading halls, which are dedicated structures designed to house and organize many villagers in a centralized location.\n\nA trading hall may contain dozens of villagers across multiple professions, each offering multiple trades. While the physical organization improves accessibility, it does not address the underlying information management challenge.\nPlayers still need to remember…\n\nwhich villager offers which trade,\nwhere that villager is located,\nand whether a better trade exists elsewhere.\n\nAs the number of villagers increases, manually tracking this information becomes impractical. The operational challenges of high volume, random variability, and frequent cross-referencing motivated the need for a structured, queryable database system."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#villager-trade-rebalance",
+    "href": "projects/minecraft-trading-database-implementation/index.html#villager-trade-rebalance",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Villager Trade Rebalance",
+    "text": "Villager Trade Rebalance\nIt should be noted that this project is designed around standard Minecraft mechanics. The Villager Trade Rebalance is an optional experimental feature that significantly alters the villager trading mechanics. Since this feature is disabled in my world, it falls outside the scope of this project. Supporting this feature would require substantial changes to the database schema and logic."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#spreadsheet-limitations",
+    "href": "projects/minecraft-trading-database-implementation/index.html#spreadsheet-limitations",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Spreadsheet Limitations",
+    "text": "Spreadsheet Limitations\nInitially, I tracked librarian trades in a spreadsheet. While manageable at small scales, this approach became increasingly difficult to maintain as the number of villagers and trades grew.\nThe workflow required frequent cross-referencing to answer questions, such as which enchantments were missing, where a specific trade was located, or whether a better offer existed. Because related information was stored across multiple sheets, this process involved manual filtering and comparison.\nIn addition, repeated text values, such as enchantment names, villager IDs, and locations, increased the risk of inconsistencies and data entry errors. As the dataset expanded, the spreadsheet also became slower to navigate and more difficult to maintain.\nTo address these limitations, I implemented a relational database management system (RDBMS), creating a structured and scalable solution for managing the data and supporting ongoing analysis."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#database-normalization",
+    "href": "projects/minecraft-trading-database-implementation/index.html#database-normalization",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Database Normalization",
+    "text": "Database Normalization\nThe database was designed using normalization principles to reduce redundancy and improve data integrity.\nRather than storing all information in a single table, core entities, such as enchantments, professions, locations, and villagers, are separated into dedicated tables. Relationships between these entities are maintained using foreign keys, allowing trade records to reference standardized values instead of repeating text fields.\nThis structure supports one-to-many relationships (for example, a location can contain many villagers, and a villager can offer multiple trades) while ensuring that updates to reference data only need to be made in one place. The result is a more consistent, maintainable dataset that supports efficient querying."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#database-schema",
+    "href": "projects/minecraft-trading-database-implementation/index.html#database-schema",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Database Schema",
+    "text": "Database Schema\nThe schema separates related data into distinct tables.\n\n\n\n\n\n\n\nTable\nDescription\n\n\n\n\nenchantments\nContains all tradeable enchantments, including their maximum level and supported item types\n\n\njobs\nContains all possible villager professions in the game\n\n\nlocations\nStores trading hall names and their coordinates\n\n\nvillagers\nStores unique villager IDs and links each to a location and profession\n\n\nlibrarian_trades\nStores individual enchanted book offers for each librarian, including the enchantment level and cost\n\n\n\nThe enchantments and jobs tables are populated from Minecraft’s source files through the ETL process, while the remaining tables store data that is manually entered for new locations, villagers, and trade offers.\nThis structure supports efficient analysis and can be extended to additional villager professions as the system grows."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#data-source",
+    "href": "projects/minecraft-trading-database-implementation/index.html#data-source",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Data Source",
+    "text": "Data Source\nMinecraft release metadata is accessible through a public version manifest, which provides information for each release. Each release entry links to version-specific metadata, including the download location for the corresponding client.jar archive. This archive contains structured data that define core gameplay elements, such as enchantments and villager professions.\nSince these files are distributed and maintained directly by the game developer, they provide an accurate and reliable source of reference data."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#extraction-transformation-and-loading",
+    "href": "projects/minecraft-trading-database-implementation/index.html#extraction-transformation-and-loading",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Extraction, Transformation, and Loading",
+    "text": "Extraction, Transformation, and Loading\nThe ETL (extract, transform, load) process begins by retrieving the version manifest and identifying the most recent stable release. The corresponding client.jar archive is then downloaded, and its contents are extracted.\nInformation about enchantments and villager professions is stored across multiple JSON files within the archive. These files are then located and parsed to extract the relevant reference data.\nFor enchantments, the data is filtered to include only those that can be obtained through villager trading, and the enchantment, its maximum level, and the supported item type are loaded into the enchantments table. Similarly, the full list of villager professions is loaded into the jobs table.\nSince this process is automated, the reference data can be updated with new releases, ensuring the database remains current."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#database-initialization",
+    "href": "projects/minecraft-trading-database-implementation/index.html#database-initialization",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Database Initialization",
+    "text": "Database Initialization\nAfter loading the reference data, I created the remaining tables using SQL to store information about trading hall locations, villagers, and their trade offers.\nThe locations table stores the names of trading halls and their coordinates:\nCREATE TABLE IF NOT EXISTS locations (\n    location TEXT PRIMARY KEY,\n    x_coord INTEGER,\n    z_coord INTEGER\n);\nThe villagers table records individual villagers and links each one to a location and profession:\nCREATE TABLE IF NOT EXISTS villagers (\n    villager_id TEXT PRIMARY KEY,\n    location TEXT,\n    job TEXT,\n\n    FOREIGN KEY(location) REFERENCES locations(location),\n    FOREIGN KEY(job) REFERENCES jobs(job)\n);\nThe librarian_trades table records individual enchanted book offers, linking a villager to an enchantment and storing the associated level and emerald cost:\nCREATE TABLE IF NOT EXISTS librarian_trades (\n    trade_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    villager_id TEXT,\n    enchantment TEXT,\n    enchantment_level INTEGER,\n    cost_emeralds INTEGER,\n\n    FOREIGN KEY(villager_id) REFERENCES villagers(villager_id),\n    FOREIGN KEY(enchantment) REFERENCES enchantments(enchantment)\n);\nForeign key constraints enforce referential integrity by ensuring that villagers reference valid locations and professions and that trade records reference valid villagers and enchantments."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#manual-data-entry-sql",
+    "href": "projects/minecraft-trading-database-implementation/index.html#manual-data-entry-sql",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Manual Data Entry (SQL)",
+    "text": "Manual Data Entry (SQL)\nNew records can be entered directly using standard SQL statements.\nAdd a new trading hall with location coordinates:\nINSERT INTO locations\nVALUES\n    ('spawn', 250, -45);\nAdd new villagers, their trading halls, and their professions:\nINSERT INTO villagers\nVALUES\n    ('spa001', 'spawn', 'librarian'),\n    ('spa002', 'spawn', 'librarian'),\n    ('spa003', 'spawn', 'librarian'),[...];\nAdd new librarian enchanted book trades, including enchantment level and cost:\nINSERT INTO librarian_trades (\n    villager_id,\n    enchantment,\n    enchantment_level,\n    cost_emeralds\n)\nVALUES\n    ('spa001', 'thorns', 3, 24),\n    ('spa001', 'quick_charge', 3, 38),\n    ('spa001', 'looting', 1, 5),[...];\nWhile this approach provides full control, it is inefficient for routine use. Entering multiple trades requires repeated statements, manual validation, and careful attention to formatting and constraints. As the dataset grows, the process becomes time-consuming and increases the risk of entry errors."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#cli-based-data-entry",
+    "href": "projects/minecraft-trading-database-implementation/index.html#cli-based-data-entry",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "CLI-Based Data Entry",
+    "text": "CLI-Based Data Entry\nTo support ongoing use, I developed an interactive Python-based CLI to streamline and standardize librarian trade entry.\nThe CLI provides a structured workflow that reduces repetitive input by retaining the current location or villager context when multiple trades are entered. Validation during data entry ensures inputs are valid, prevents duplicate or inconsistent records, and enforces constraints such as a limit of four enchanted book offers per librarian."
+  },
+  {
+    "objectID": "projects/minecraft-trading-database-implementation/index.html#ideas-for-the-future",
+    "href": "projects/minecraft-trading-database-implementation/index.html#ideas-for-the-future",
+    "title": "Minecraft Villager Trading Database: System Design and Implementation",
+    "section": "Ideas for the Future",
+    "text": "Ideas for the Future\nIn a follow-up project, I plan to build on this system with several enhancements:\n\nSupport for additional villager professions—Extend tracking and analysis to professions such as armorers, toolsmiths, and weaponsmiths, where item quality and pricing variability also affect trade value.\nCLI tool for updating existing trades—Support updating existing trade records to reflect discounted prices from curing zombified villagers.\nETL pipeline version awareness—Detect when the game version changes and update the enchantments and jobs tables only if the relevant game data has changed.\nVillager scoring model—Introduce a scoring framework that evaluates villagers based on factors such as trade quality, cost, and relative rarity to help prioritize which to keep or replace.\nInteractive visual dashboard—Provide a graphical interface for exploring trades, viewing villagers, and quickly identifying high-value offers.\n\nTogether, these improvements would transform the system into a more robust tool for managing and optimizing villager trading in Minecraft."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Dylan Bretz Jr.",
     "section": "",
     "text": "Hello 👋\nMy name is Dylan :)\nI’m a musician, problem solver, and lifelong learner transitioning to data analytics.\nI bring a unique blend of analytical, creative, and critical thinking to everything I do.\nI’m currently building my portfolio, obtaining certifications, and refining my technical skills.\nI use Python, SQL, R, JavaScript, HTML/CSS, and Markdown, as well as spreadsheets and Tableau.\nI’m currently seeking Data Analyst roles (remote preferred).\nI’m based in Ohio but open to relocating (esp. to PNW 🌲).\nRecently completed:\n\nCyclistic Bike-Share Data Analysis with Python Case Study\nGoogle Data Analytics Professional Certificate\nGoogle Data Analysis with Python Specialization\nGoogle Data-Driven Decision Making Specialization\n\nOutside of work, I enjoy watching movies, listening to music, reading, spending time outdoors, and healthy living.\nThanks for stopping by—more coming soon!\n\n\n\n Back to top"
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "A collection of completed projects and case studies.\n\n\n\n\n\n\n\n\n\n\n\nCyclistic Bike-Share Data Analysis with Python Case Study\n\n\n\ncase study\n\ndata analysis\n\ndata visualization\n\npython\n\netl\n\n\n\n\n\n\n\n\n\n2026-01-19\n\n\nDylan Bretz Jr.\n\n24 min\n\n\n\n\nNo matching items\n\n\n\n\n\n Back to top"
-  },
-  {
-    "objectID": "contact.html",
-    "href": "contact.html",
-    "title": "Contact",
-    "section": "",
-    "text": "Thank you for visiting my site :)\nFeel free to send me a message if you’d like to connect!\n\n\n Back to top"
   }
 ]
