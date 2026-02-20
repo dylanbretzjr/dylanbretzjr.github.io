@@ -14,6 +14,32 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Clean Project URLs
+        run: |
+          python - << 'EOF'
+          import os
+          import re
+
+          projects_dir = 'projects'
+          if os.path.exists(projects_dir):
+              for folder in os.listdir(projects_dir):
+                  path = os.path.join(projects_dir, folder)
+                  if os.path.isdir(path):
+                      # Looks for YYYY-MM-DD- at the start of the folder name
+                      match = re.match(r'^\d{4}-\d{2}-\d{2}-(.*)', folder)
+                      if match:
+                          new_name = match.group(1)
+                          new_path = os.path.join(projects_dir, new_name)
+                          os.rename(path, new_path)
+                          print(f'Renamed directory: {folder} -> {new_name}')
+          EOF
+          "
+
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
