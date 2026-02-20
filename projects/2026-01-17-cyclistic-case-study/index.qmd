@@ -26,9 +26,9 @@ These findings support strategies focused on converting casual riders during pea
 
 **Project highlights:**
 
-- [Google Slides presentation](https://docs.google.com/presentation/d/1QIhYy39x3hqI8Ahvh6gUQBD8TNX5YNHvGoN-5PVd13U/present#slide=id.g3b209955022_0_2985){target="_blank"}
-- [Interactive ride location map](./cyclistic-ride-map/){target="_blank"}
-- [GitHub repository](https://github.com/dylanbretzjr/cyclistic-data-analysis-case-study){target="_blank"}
+- [Google Slides presentation](https://docs.google.com/presentation/d/1QIhYy39x3hqI8Ahvh6gUQBD8TNX5YNHvGoN-5PVd13U/present#slide=id.g3b209955022_0_2985){target="_blank" rel="noopener"}
+- [Interactive ride location map](./cyclistic-ride-map/){target="_blank" rel="noopener"}
+- [GitHub repository](https://github.com/dylanbretzjr/cyclistic-data-analysis-case-study){target="_blank" rel="noopener"}
 
 # Background
 
@@ -934,7 +934,7 @@ To better compare geographic differences, I created a dynamic, density-weighted 
 
 - Member ride locations are more dispersed, while casual riders tend to cluster near the lakeshore
 
-The map can be accessed [here](./cyclistic-ride-map/){target="_blank"}.
+The map can be accessed [here](./cyclistic-ride-map/){target="_blank" rel="noopener"}.
 
 Because the map is interactive, you can pan and zoom around to view specific areas.
 
@@ -995,6 +995,6 @@ These findings support strategies focused on converting casual riders during pea
 
 **Deliverables:**
 
-- [Google Slides presentation](https://docs.google.com/presentation/d/1QIhYy39x3hqI8Ahvh6gUQBD8TNX5YNHvGoN-5PVd13U/present#slide=id.g3b209955022_0_2985){target="_blank"}
-- [Interactive ride location map](./cyclistic-ride-map/){target="_blank"}
-- [GitHub repository](https://github.com/dylanbretzjr/cyclistic-data-analysis-case-study){target="_blank"}
+- [Google Slides presentation](https://docs.google.com/presentation/d/1QIhYy39x3hqI8Ahvh6gUQBD8TNX5YNHvGoN-5PVd13U/present#slide=id.g3b209955022_0_2985){target="_blank" rel="noopener"}
+- [Interactive ride location map](./cyclistic-ride-map/){target="_blank" rel="noopener"}
+- [GitHub repository](https://github.com/dylanbretzjr/cyclistic-data-analysis-case-study){target="_blank" rel="noopener"}
