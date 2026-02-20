@@ -38,7 +38,6 @@ jobs:
                           os.rename(path, new_path)
                           print(f'Renamed directory: {folder} -> {new_name}')
           EOF
-          "
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
