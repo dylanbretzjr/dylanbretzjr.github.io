@@ -458,21 +458,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Scalable Architecture</strong>—A normalized relational database model supports expansion to additional villager professions, locations, and trade types without restructuring the system.</li>
 </ul>
 <p>By transitioning from a spreadsheet to a relational database, I developed a robust system that improves villager trade data management and supports better trading decisions.</p>
-<p>To view the full implementation and source code, visit <a href="https://github.com/dylanbretzjr/mc-trading-hall-db">this project’s repository</a> on GitHub.</p>
+<p>To view the full implementation and source code, visit <a href="https://github.com/dylanbretzjr/mc-trading-hall-db" target="_blank" rel="noopener">this project’s repository</a> on GitHub.</p>
 </section>
 <section id="background" class="level1">
 <h1>Background</h1>
 <p>Having a basic understanding of villager trading in Minecraft provides helpful context for this project.</p>
 <section id="villagers-and-trading-mechanics" class="level2">
 <h2 class="anchored" data-anchor-id="villagers-and-trading-mechanics">Villagers and Trading Mechanics</h2>
-<p><a href="https://minecraft.wiki/w/Villager">Villagers</a> are non-playable characters that live in villages and can be assigned different <a href="https://minecraft.wiki/w/Villager_professions">professions</a>, such as armorer, farmer, or librarian. Players can trade with villagers that have a profession using emeralds as currency to buy and sell items.</p>
+<p><a href="https://minecraft.wiki/w/Villager" target="_blank" rel="noopener">Villagers</a> are non-playable characters that live in villages and can be assigned different <a href="https://minecraft.wiki/w/Villager_professions" target="_blank" rel="noopener">professions</a>, such as armorer, farmer, or librarian. Players can trade with villagers that have a profession using emeralds as currency to buy and sell items.</p>
 <p>Each villager starts out with a limited number of trades, and additional trades can be unlocked through repeated trading. Trades are randomly selected from a set of possible offers specific to each profession.</p>
 </section>
 <section id="librarian-villagers" class="level2">
 <h2 class="anchored" data-anchor-id="librarian-villagers">Librarian Villagers</h2>
-<p>One of the most valuable professions is the <a href="https://minecraft.wiki/w/Librarian">librarian</a>. Not only can you easily get lots of emeralds by selling them paper, but you can also buy enchanted books, which are used to enhance armor, tools, and weapons. Having a good supply of emeralds and enchanted books can be a real game changer, which makes trading with librarians very useful.</p>
-<p>However, finding a librarian with a specific enchantment can be <em>tedious</em> (<a href="https://www.reddit.com/r/Minecraft/comments/1039ybr/i_hate_librarians/" title="r/Minecraft | &quot;I hate librarians&quot;">if you know, you know</a>).</p>
-<p>Currently, librarian enchanted book trades are randomly selected from a <a href="https://minecraft.wiki/w/Enchanting#Summary_of_enchantments">set of 40 enchantments</a>, and each librarian can offer up to 4 enchanted book trades. In addition, both the enchantment level and the cost in emeralds are randomly determined.</p>
+<p>One of the most valuable professions is the <a href="https://minecraft.wiki/w/Librarian" target="_blank" rel="noopener">librarian</a>. Not only can you easily get lots of emeralds by selling them paper, but you can also buy enchanted books, which are used to enhance armor, tools, and weapons. Having a good supply of emeralds and enchanted books can be a real game changer, which makes trading with librarians very useful.</p>
+<p>However, finding a librarian with a specific enchantment can be <em>tedious</em> (<a href="https://www.reddit.com/r/Minecraft/comments/1039ybr/i_hate_librarians/" target="_blank" rel="noopener" title="r/Minecraft | &quot;I hate librarians&quot;">if you know, you know</a>).</p>
+<p>Currently, librarian enchanted book trades are randomly selected from a <a href="https://minecraft.wiki/w/Enchanting#Summary_of_enchantments" target="_blank" rel="noopener">set of 40 enchantments</a>, and each librarian can offer up to 4 enchanted book trades. In addition, both the enchantment level and the cost in emeralds are randomly determined.</p>
 <p>As a result, obtaining high-level enchantments at reasonable prices often requires cycling through and retaining many librarians. While desirable trades can be locked in once found, managing multiple librarians and their offers quickly becomes difficult as their numbers grow.</p>
 </section>
 <section id="villager-trading-halls" class="level2">
@@ -490,7 +490,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="villager-trade-rebalance" class="level2">
 <h2 class="anchored" data-anchor-id="villager-trade-rebalance">Villager Trade Rebalance</h2>
-<p>It should be noted that this project is designed around standard Minecraft mechanics. The <a href="https://minecraft.wiki/w/Villager_Trade_Rebalance">Villager Trade Rebalance</a> is an optional experimental feature that significantly alters the villager trading mechanics. Since this feature is disabled in my world, it falls outside the scope of this project. Supporting this feature would require substantial changes to the database schema and logic.</p>
+<p>It should be noted that this project is designed around standard Minecraft mechanics. The <a href="https://minecraft.wiki/w/Villager_Trade_Rebalance" target="_blank" rel="noopener">Villager Trade Rebalance</a> is an optional experimental feature that significantly alters the villager trading mechanics. Since this feature is disabled in my world, it falls outside the scope of this project. Supporting this feature would require substantial changes to the database schema and logic.</p>
 </section>
 </section>
 <section id="database-design" class="level1">
@@ -555,7 +555,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>To ensure the database remains accurate and up to date, I built a custom Python-based ETL pipeline that automatically extracts, transforms, and loads reference data directly from Minecraft’s source files. This approach replaces the need to manually enter or maintain this information and enables the <code>enchantments</code> and <code>jobs</code> tables to be updated whenever a new version of the game is released.</p>
 <section id="data-source" class="level2">
 <h2 class="anchored" data-anchor-id="data-source">Data Source</h2>
-<p>Minecraft release metadata is accessible through a public <a href="https://piston-meta.mojang.com/mc/game/version_manifest.json">version manifest</a>, which provides information for each release. Each release entry links to version-specific metadata, including the download location for the corresponding <code>client.jar</code> archive. This archive contains structured data that define core gameplay elements, such as enchantments and villager professions.</p>
+<p>Minecraft release metadata is accessible through a public <a href="https://piston-meta.mojang.com/mc/game/version_manifest.json" target="_blank" rel="noopener">version manifest</a>, which provides information for each release. Each release entry links to version-specific metadata, including the download location for the corresponding <code>client.jar</code> archive. This archive contains structured data that define core gameplay elements, such as enchantments and villager professions.</p>
 <p>Since these files are distributed and maintained directly by the game developer, they provide an accurate and reliable source of reference data.</p>
 </section>
 <section id="extraction-transformation-and-loading" class="level2">
@@ -694,7 +694,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In a follow-up project, I plan to build on this system with several enhancements:</p>
 <ul>
 <li><strong>Support for additional villager professions</strong>—Extend tracking and analysis to professions such as armorers, toolsmiths, and weaponsmiths, where item quality and pricing variability also affect trade value.</li>
-<li><strong>CLI tool for updating existing trades</strong>—Support updating existing trade records to reflect discounted prices from <a href="https://minecraft.wiki/w/Zombie_Villager#Curing">curing zombified villagers</a>.</li>
+<li><strong>CLI tool for updating existing trades</strong>—Support updating existing trade records to reflect discounted prices from <a href="https://minecraft.wiki/w/Zombie_Villager#Curing" target="_blank" rel="noopener">curing zombified villagers</a>.</li>
 <li><strong>ETL pipeline version awareness</strong>—Detect when the game version changes and update the <code>enchantments</code> and <code>jobs</code> tables only if the relevant game data has changed.</li>
 <li><strong>Villager scoring model</strong>—Introduce a scoring framework that evaluates villagers based on factors such as trade quality, cost, and relative rarity to help prioritize which to keep or replace.</li>
 <li><strong>Interactive visual dashboard</strong>—Provide a graphical interface for exploring trades, viewing villagers, and quickly identifying high-value offers.</li>
