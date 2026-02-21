@@ -1,6 +1,5 @@
 ---
 title: "Minecraft Villager Trading Database: System Design and Implementation"
-slug: "minecraft-trading-database-implementation"
 author: "Dylan Bretz Jr."
 date: "2026-02-20"
 categories:
