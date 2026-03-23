@@ -2,15 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Dylan Bretz Jr.">
 <meta name="dcterms.date" content="2026-01-19">
 
-<title>Cyclistic Bike-Share Data Analysis with Python Case Study – Dylan Bretz Jr.</title>
+<title>Cyclistic Bike-Share Data Analysis Case Study (Python) – Dylan Bretz Jr.</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -70,19 +73,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../..//img/logo.svg" rel="icon" type="image/svg+xml">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-6ebf1c17ee52d4a41d24e1b861b6ca7f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9f790322540bfaeee81c3744168ecf0e.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-6ebf1c17ee52d4a41d24e1b861b6ca7f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-9cc6fd98019ad86c23c754bcb4eacc15.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b8259827ebabab639238eca798b1cb62.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-9cc6fd98019ad86c23c754bcb4eacc15.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-6c1dfd964c87d51a04553e843f3b1bbb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-e34e31f47021e1da25b9e1274e957bd9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-6c1dfd964c87d51a04553e843f3b1bbb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f0bc4e990797ad5ddd07156a3175f9e3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-ea12b81076e8880002b61140869dc7ab.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-f0bc4e990797ad5ddd07156a3175f9e3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="../../site_libs/quarto-contrib/iconify-3.0.0/iconify-icon.min.js"></script>
 <link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
 <link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet">
@@ -117,13 +119,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Cyclistic Bike-Share Data Analysis with Python Case Study – Dylan Bretz Jr.">
+<meta property="og:title" content="Cyclistic Bike-Share Data Analysis Case Study (Python) – Dylan Bretz Jr.">
 <meta property="og:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
 <meta property="og:image" content="https://dylanbretzjr.com/projects/cyclistic-case-study/cyclistic_logo.png">
 <meta property="og:site_name" content="Dylan Bretz Jr.">
 <meta property="og:image:height" content="1244">
 <meta property="og:image:width" content="1400">
-<meta name="twitter:title" content="Cyclistic Bike-Share Data Analysis with Python Case Study – Dylan Bretz Jr.">
+<meta name="twitter:title" content="Cyclistic Bike-Share Data Analysis Case Study (Python) – Dylan Bretz Jr.">
 <meta name="twitter:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
 <meta name="twitter:image" content="https://dylanbretzjr.com/projects/cyclistic-case-study/cyclistic_logo.png">
 <meta name="twitter:image-height" content="1244">
@@ -441,7 +443,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Cyclistic Bike-Share Data Analysis with Python Case Study</h1>
+<h1 class="title">Cyclistic Bike-Share Data Analysis Case Study (Python)</h1>
   <div class="quarto-categories">
     <div class="quarto-category">case study</div>
     <div class="quarto-category">data analysis</div>
@@ -479,7 +481,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="cyclistic_logo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Cyclistic logo." width="500"></p>
+<p><img src="cyclistic_logo.png.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Cyclistic logo." width="500"></p>
 </figure>
 </div>
 <section id="introduction" class="level1">
