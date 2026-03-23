@@ -11,7 +11,7 @@ categories:
   - sqlite
   - python
   - etl
-image: https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222384-thumbnail_xl.webp
+image: "https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222384-thumbnail_xl.webp"
 ---
 
 ![]({{< meta image >}}){fig-alt="Grand Exchange (Villager Trading Hall) Minecraft Map 1/2." fig-align="center" width="750px"}
