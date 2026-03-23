@@ -65,3 +65,5 @@ format:
     code-overflow: scroll
     grid:
       margin-width: 300px
+    default-image-extension: ""
+
