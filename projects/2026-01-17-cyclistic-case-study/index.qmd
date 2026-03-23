@@ -8,7 +8,7 @@ categories:
   - data visualization
   - python
   - etl
-image: cyclistic_logo.png
+image: "cyclistic_logo.png"
 ---
 
 ![]({{< meta image >}}){fig-alt="Cyclistic logo." fig-align="center" width="500px"}
