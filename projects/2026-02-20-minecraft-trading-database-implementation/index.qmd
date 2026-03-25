@@ -11,6 +11,7 @@ categories:
   - sqlite
   - python
   - etl
+  - cli-tool
 image: "https://static.planetminecraft.com/files/image/minecraft/project/2021/940/14222384-thumbnail_xl.webp"
 ---
 
