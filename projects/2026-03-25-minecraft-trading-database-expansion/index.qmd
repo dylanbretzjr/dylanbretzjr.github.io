@@ -1,0 +1,636 @@
+---
+title: "Minecraft Villager Trading Database: System Expansion and Optimization"
+author: "Dylan Bretz Jr."
+date: "2026-03-27"
+categories:
+  - minecraft
+  - data engineering
+  - database normalization
+  - rdbms
+  - sql
+  - sqlite
+  - python
+  - etl
+  - cli-tool
+image: "https://pchcorral.com/wp-content/uploads/2025/05/b0bd00e0-eaed-11ef-a319-fb4e7360c4ec.png"
+---
+
+![]({{< meta image >}}){fig-alt="Villagers from _A Minecraft Movie_ (2025)" fig-align="center" width="750px"}
+
+# Introduction
+
+This project focuses on expanding and optimizing the Minecraft villager trading database system I built in a [previous project](https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/){target="_blank" rel="noopener"}.
+
+In particular, this project involved the following improvements:
+
+- **Optimizing the existing database schema** for integrity and consistency
+- **Expanding support** for additional villager professions
+- **Creating a master trades view** to easily view trades across professions
+- **Developing a CLI tool** to efficiently update existing trades
+- **Enhancing the ETL pipeline** with change detection to only update the reference tables if necessary
+- **Implementing a villager status system** to help determine which librarians to keep or not
+
+These improvements increase the integrity, efficiency, and value of this database system, supporting better informed decision-making. As a result, I was able to identify 6 low-value librarians in my database to replace.
+
+# Supporting Additional Professions
+
+For me, this database is most useful for managing librarian villager trades. [As described in the previous project](https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/#librarian-villagers){target="_blank" rel="noopener"}, trading with librarians is especially valuable. Not only this, but I also have more librarians than any other profession, due to both the value and variety of their enchanted book trades. For these reasons, managing librarian trades is the primary purpose of this database.
+
+That said, I designed the database to be flexible to enable support for additional villager professions as needed.
+
+## Trade Variability
+
+It really isn't necessary to track every trade for every villager profession. Many trades simply aren't very good or worth tracking, and which trades are most useful really depends on the player and the specific circumstances. When tracking inherently becomes more useful is when there is more variability between trades.
+
+For example, librarians sell enchanted books, which are randomly selected from a set of 40 enchantments, and both the enchantment level and the cost are also randomly determined.
+
+Similarly, [armorers](https://minecraft.wiki/w/Armorer){target="_blank" rel="noopener"}, [toolsmiths](https://minecraft.wiki/w/Toolsmith){target="_blank" rel="noopener"}, and [weaponsmiths](https://minecraft.wiki/w/Weaponsmith){target="_blank" rel="noopener"} all sell useful items that come with random enchantments and vary in enchantment level and cost:
+
+ - **Armorers** sell enchanted diamond boots, leggings, chestplates, and helmets.
+ - **Toolsmiths** sell enchanted diamond axes, shovels, and pickaxes.
+ - **Weaponsmiths** sell enchanted diamond axes and swords.
+
+When trades vary in enchantment and cost like this, it becomes difficult to remember which villager offers which specific trade, making it especially useful to track these trades using a database.
+
+### Color Variability
+
+Another aspect of trade variability worth quickly mentioning is item color.
+
+[Shepherds](https://minecraft.wiki/w/Shepherd){target="_blank" rel="noopener"} offer colored wool/carpets, beds, and banners. There are 16 possible colors for each of these offers. Since the color of each offer is random, the same villager can offer different colors for different items. This makes tracking these trades also particularly useful, especially if you use a lot of colored wool/carpets, beds, or banners in your builds.
+
+While [masons](https://minecraft.wiki/w/Mason){target="_blank" rel="noopener"} also offer variable color trades, they only have one trade each where the color is variable, making it easy enough to manage without an external system. Simply organizing masons by color and/or displaying the block color near their trading station works well.
+
+## Expanding and Optimizing the Database Schema
+
+I decided to expand the database schema to support tracking armorer, toolsmith, and weaponsmith trades, since I already have these professions in my trading hall. In the future, I'll likely also add support for shepherds.
+
+### Updating Existing Tables
+
+[The database schema I implemented in the previous project](https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/#database-schema){target="_blank" rel="noopener"} can already be expanded to support the additional required tables as-is. However, I noticed a few opportunities for minor improvements to the existing schema---mainly adding additional verification logic in the form of `NOT NULL` and `CHECK()`.
+
+For the `librarian_trades` table, I added `ON DELETE CASCADE` to the `villager_id` foreign key relationship. This way, when a librarian is removed from the `villagers` table, the corresponding rows are dropped from the `librarian_trades` table.
+
+I also decided to change `cost_emeralds` to `emerald_cost`. I made sure to update the data entry CLI-tool accordingly.
+
+Additionally, I added a new `cured` column to the `villagers` table to track whether villagers have been zombified and cured or not. Since curing zombified villagers permanently discounts the costs of their trades, knowing whether or not a villager has been zombified and cured is important for comparing offers, which will be crucial later when determining each villager's status.
+
+The `cured` column functions as a boolean. [SQLite3 doesn't have a separate boolean datatype](https://www.sqlite.org/datatype3.html){target="_blank" rel="noopener"}, so I used integers where `0` represents 'false' and `1` represents 'true'. I enforce integrity for this column by specifying `"cured" INTEGER NOT NULL DEFAULT 0 CHECK(cured in(0, 1))`, which ensures the only possible values that can be stored in the `cured` columns are `0` and `1`, and sets the default value to `0` (false).
+
+### Altering Tables Using SQLite
+
+Since I'm using SQLite as my database engine, changing the table definitions isn't as straightforward as with PostgreSQL, for instance.
+
+In PostgreSQL, tables can easily be altered like so:
+
+```sql
+ALTER TABLE locations
+ALTER COLUMN x_coord SET NOT NULL,
+ALTER COLUMN y_coord SET NOT NULl;
+```
+
+However, the process with SQLite is more involved because there are [limitations in how tables can be altered or modified](https://www.sqlite.org/lang_altertable.html){target="_blank" rel="noopener"}.
+
+The workaround involves (1) creating a new table, (2) copying the data from the old table to the new table, (3) dropping the old table, and (4) renaming the new table:
+
+```sql
+BEGIN TRANSACTION;
+
+-- 1. Creating a new table
+CREATE TABLE locations_new (
+    location TEXT PRIMARY KEY,
+    x_coord INTEGER NOT NULL,
+    z_coord INTEGER NOT NULL
+);
+
+-- 2. Copying the data from the old table to the new table
+INSERT INTO locations_new (location, x_coord, z_coord)
+SELECT location, x_coord, z_coord
+FROM locations;
+
+-- 3. Dropping the old table
+DROP TABLE locations;
+
+-- 4. Renaming the new table
+ALTER TABLE locations_new RENAME TO locations;
+
+COMMIT;
+```
+
+The result is the following updated table definitions:
+
+```sql
+CREATE TABLE "locations" (
+	"location"	TEXT,
+	"x_coord"	INTEGER NOT NULL,
+	"z_coord"	INTEGER NOT NULL,
+	PRIMARY KEY("location")
+)
+```
+
+```sql
+CREATE TABLE "villagers" (
+	"villager_id"	TEXT,
+	"location"	TEXT NOT NULL,
+	"job"	TEXT NOT NULL,
+	"cured"	INTEGER NOT NULL DEFAULT 0 CHECK(cured IN (0, 1)),
+	PRIMARY KEY("villager_id"),
+	FOREIGN KEY("job") REFERENCES "jobs"("job"),
+	FOREIGN KEY("location") REFERENCES "locations"("location")
+)
+```
+
+```sql
+CREATE TABLE "librarian_trades" (
+	"trade_id"	INTEGER,
+	"villager_id"	TEXT NOT NULL,
+	"enchantment"	TEXT NOT NULL,
+	"enchantment_level"	INTEGER NOT NULL CHECK(enchantment_level BETWEEN 1 AND 5),
+	"emerald_cost"	INTEGER NOT NULL CHECK(emerald_cost BETWEEN 1 AND 64),
+	PRIMARY KEY("trade_id" AUTOINCREMENT),
+	FOREIGN KEY("enchantment") REFERENCES "enchantments"("enchantment"),
+	FOREIGN KEY("villager_id") REFERENCES "villagers"("villager_id") ON DELETE CASCADE
+)
+```
+
+```sql
+CREATE TABLE "enchantments" (
+	"enchantment"	TEXT,
+	"max_level"	INTEGER NOT NULL CHECK(max_level BETWEEN 1 AND 5),
+	"supported_items"	TEXT NOT NULL,
+	PRIMARY KEY("enchantment")
+)
+```
+
+```sql
+CREATE TABLE "jobs" (
+	"job"	TEXT,
+	PRIMARY KEY("job")
+)
+```
+
+The `jobs` table didn't actually change---I just included it here to be thorough.
+
+### Tweaking the Villager ID System
+
+In addition to updating these tables, I decided to slightly modify the `villager_id` system.
+
+Initially, I used a three letter location code concatenated with a three digit code representing the villager number at that location (e.g., `spa001` for the fist villager at `spawn`). I've now opted to use a two letter location code instead (`spa001` changes to `sp001`).
+
+I kept the three digit villager number as-is, since, in my case, two digits don't provide enough combinations.
+
+I created a new Python script to automate migrating the villager IDs to the new system using [regular expressions](https://docs.python.org/3/library/re.html), which I named `migrate_ids.py`.
+
+### Creating Additional Tables
+
+With the existing tables optimized, I moved on to creating the additional required tables for armorer, toolsmith, and weaponsmith trades. The schema for these trades is slightly more complex than for the librarian trades.
+
+In the case of librarians, there is only one enchantment per enchanted book. For armorers, toolsmiths, and weaponsmiths, each item can contain multiple enchantments, which adds complexity to the system.
+
+In order to maintain proper normalization, the items and the enchantments have to be split between two tables.
+
+The `armorer_trades`, `toolsmith_trades`, `weaponsmith_trades` tables record the associated item trades for each profession and their cost:
+
+```sql
+CREATE TABLE IF NOT EXISTS armorer_trades (
+	trade_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	villager_id TEXT NOT NULL,
+	item TEXT NOT NULL CHECK(item IN ('diamond_boots', 'diamond_leggings', 'diamond_chestplate', 'diamond_helmet')),
+	emerald_cost INTEGER NOT NULL CHECK(emerald_cost BETWEEN 1 AND 64),
+
+	FOREIGN KEY(villager_id) REFERENCES villagers(villager_id) ON DELETE CASCADE,
+	UNIQUE(villager_id, item)
+);
+```
+
+```sql
+CREATE TABLE IF NOT EXISTS toolsmith_trades (
+	trade_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	villager_id TEXT NOT NULL,
+	item TEXT NOT NULL CHECK(item IN ('diamond_axe', 'diamond_shovel', 'diamond_pickaxe')),
+	emerald_cost INTEGER NOT NULL CHECK(emerald_cost BETWEEN 1 AND 64),
+
+	FOREIGN KEY(villager_id) REFERENCES villagers(villager_id) ON DELETE CASCADE,
+	UNIQUE(villager_id, item)
+);
+```
+
+```sql
+CREATE TABLE IF NOT EXISTS weaponsmith_trades (
+	trade_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	villager_id TEXT NOT NULL,
+	item TEXT NOT NULL CHECK(item IN ('diamond_axe', 'diamond_sword')),
+	emerald_cost INTEGER NOT NULL CHECK(emerald_cost BETWEEN 1 AND 64),
+
+	FOREIGN KEY(villager_id) REFERENCES villagers(villager_id) ON DELETE CASCADE,
+	UNIQUE(villager_id, item)
+);
+```
+
+The `armorer_trade_enchantments`, `toolsmith_trade_enchantments`, and `weaponsmith_trade_enchantments` tables link each item to at least one enchantment and its level:
+
+```sql
+CREATE TABLE IF NOT EXISTS armorer_trade_enchantments (
+	trade_id INTEGER NOT NULL,
+	enchantment TEXT NOT NULL,
+	enchantment_level INTEGER NOT NULL CHECK(enchantment_level BETWEEN 1 AND 5),
+
+	PRIMARY KEY(trade_id, enchantment),
+	FOREIGN KEY(trade_id) REFERENCES armorer_trades(trade_id) ON DELETE CASCADE,
+	FOREIGN KEY(enchantment) REFERENCES enchantments(enchantment)
+);
+```
+
+```sql
+CREATE TABLE IF NOT EXISTS toolsmith_trade_enchantments (
+	trade_id INTEGER NOT NULL,
+	enchantment TEXT NOT NULL,
+	enchantment_level INTEGER NOT NULL CHECK(enchantment_level BETWEEN 1 AND 5),
+
+	PRIMARY KEY(trade_id, enchantment),
+	FOREIGN KEY(trade_id) REFERENCES toolsmith_trades(trade_id) ON DELETE CASCADE,
+	FOREIGN KEY(enchantment) REFERENCES enchantments(enchantment)
+);
+```
+
+```sql
+CREATE TABLE IF NOT EXISTS weaponsmith_trade_enchantments (
+	trade_id INTEGER NOT NULL,
+	enchantment TEXT NOT NULL,
+	enchantment_level INTEGER NOT NULL CHECK(enchantment_level BETWEEN 1 AND 5),
+
+	PRIMARY KEY(trade_id, enchantment),
+	FOREIGN KEY(trade_id) REFERENCES weaponsmith_trades(trade_id) ON DELETE CASCADE,
+	FOREIGN KEY(enchantment) REFERENCES enchantments(enchantment)
+);
+```
+
+As with the entire database schema, foreign key relationships and verification logic like `NOT NULl` and `CHECK()` improve the integrity of these tables.
+
+Using `ON DELETE CASCADE` ensures that removing a trade from the trade tables (`armorer_trades`, `toolsmith_trades`, `weaponsmith_trades`) will remove the corresponding enchantments from the trade enchantment tables (`armorer_trade_enchantments`, `toolsmith_trade_enchantments`, `weaponsmith_trade_enchantments`). Similarly, removing an armorer, toolsmith, or weaponsmith from the `villagers` table will remove all corresponding rows from both the trades and trade enchantment tables.
+
+## Updating the Data Entry CLI Tool
+
+Next, I updated the CLI-based data entry tool to support the armorer, toolsmith, and weaponsmith professions. I deprecated the old `add_lib_trade.py` script and replaced it with a new `add_trade.py` script.
+
+There are a few key changes made with the `add_trade.py` script that add support for these professions. First, when adding a new villager to the system, the profession is specified from a validated list (`librarian`, `armorer`, `toolsmith`, or `weaponsmith`). Also, when adding a new trade, the item is specified from a validated list depending on the profession.
+
+In addition to support for these professions, I added a feature to set the `cured` status (`0` or `1`) when adding new villagers using `add_trade.py`.
+
+These changes support efficient data entry with contextual input validation for all the professions I track with this database.
+
+# Master Trades View
+
+With the database schema updated, I decided to create a new SQL view to be able to easily view and query all trades across all professions. Creating this view is more involved because the information for the new professions is split across multiple tables, and the columns don't line up with the `librarian_trades` table.
+
+In order to combine all these tables into a single view, I first built four tables with matching columns (one for each profession), joining item and enchantment tables where necessary. I then stacked these tables on top of each other using `UNION ALL`.
+
+Here is the SQL code used to create this view:
+
+```sql
+CREATE VIEW IF NOT EXISTS master_trades_view AS
+
+-- 1. Librarian Trades
+SELECT 
+    v.location,
+    v.villager_id,
+    v.job,
+    'enchanted_book' AS item,
+    lt.enchantment || ' ' || lt.enchantment_level AS enchantments,
+    lt.emerald_cost
+FROM villagers v
+JOIN librarian_trades lt ON v.villager_id = lt.villager_id
+
+UNION ALL
+
+-- 2. Armorer Trades
+SELECT 
+    v.location,
+    v.villager_id,
+    v.job,
+    at.item,
+    COALESCE(GROUP_CONCAT(ate.enchantment || ' ' || ate.enchantment_level, ', ' ORDER BY ate.enchantment ASC), 'None') AS enchantments,
+    at.emerald_cost
+FROM villagers v
+JOIN armorer_trades at ON v.villager_id = at.villager_id
+LEFT JOIN armorer_trade_enchantments ate ON at.trade_id = ate.trade_id
+GROUP BY at.trade_id, v.location, v.villager_id, v.job, at.item, at.emerald_cost
+
+UNION ALL
+
+-- 3. Toolsmith Trades
+SELECT 
+    v.location,
+    v.villager_id,
+    v.job,
+    tt.item,
+    COALESCE(GROUP_CONCAT(tte.enchantment || ' ' || tte.enchantment_level, ', ' ORDER BY tte.enchantment ASC), 'None') AS enchantments,
+    tt.emerald_cost
+FROM villagers v
+JOIN toolsmith_trades tt ON v.villager_id = tt.villager_id
+LEFT JOIN toolsmith_trade_enchantments tte ON tt.trade_id = tte.trade_id
+GROUP BY tt.trade_id, v.location, v.villager_id, v.job, tt.item, tt.emerald_cost
+
+UNION ALL
+
+-- 4. Weaponsmith Trades
+SELECT 
+    v.location,
+    v.villager_id,
+    v.job,
+    wt.item,
+    COALESCE(GROUP_CONCAT(wte.enchantment || ' ' || wte.enchantment_level, ', ' ORDER BY wte.enchantment ASC), 'None') AS enchantments,
+    wt.emerald_cost
+FROM villagers v
+JOIN weaponsmith_trades wt ON v.villager_id = wt.villager_id
+LEFT JOIN weaponsmith_trade_enchantments wte ON wt.trade_id = wte.trade_id
+GROUP BY wt.trade_id, v.location, v.villager_id, v.job, wt.item, wt.emerald_cost;
+```
+
+## Simplifying Complex Queries
+
+Using `master_trades_view` greatly simplifies querying trades across professions.
+
+For example, this query finds all trades where the item being sold is a diamond axe (sorted by lowest price) using `master_trades_view`:
+
+```sql
+SELECT * FROM master_trades_view
+WHERE item = 'diamond_axe'
+ORDER BY emerald_cost ASC;
+```
+
+This example is particularly useful, since both toolsmiths and weaponsmiths sell diamond axes.
+
+Without using `master_trades_view`, I would have to write a much more complex query to return the same information:
+
+```sql
+WITH combined_trades AS (
+    -- Toolsmith Trades
+    SELECT
+        tt.trade_id,
+        tt.villager_id,
+        tt.item,
+        tt.emerald_cost,
+        COALESCE(GROUP_CONCAT(tte.enchantment || ' ' || tte.enchantment_level, ', ' ORDER BY tte.enchantment ASC), 'None') AS enchantments
+    FROM toolsmith_trades AS tt
+    JOIN toolsmith_trade_enchantments AS tte
+        ON tt.trade_id = tte.trade_id
+    GROUP BY tt.trade_id
+    
+    UNION ALL
+    
+    -- Weaponsmith Trades
+    SELECT
+        wt.trade_id,
+        wt.villager_id,
+        wt.item,
+        wt.emerald_cost,
+        COALESCE(GROUP_CONCAT(wte.enchantment || ' ' || wte.enchantment_level, ', ' ORDER BY wte.enchantment ASC), 'None') AS enchantments
+    FROM weaponsmith_trades AS wt
+    JOIN weaponsmith_trade_enchantments AS wte
+        ON wt.trade_id = wte.trade_id
+    GROUP BY wt.trade_id
+)
+
+-- Filter and sort the combined results
+SELECT
+	v.location,
+	v.villager_id,
+	v.job,
+	ct.item,
+	ct.enchantments,
+	ct.emerald_cost
+FROM combined_trades AS ct
+JOIN villagers AS v
+	ON ct.villager_id = v.villager_id
+WHERE item = 'diamond_axe'
+ORDER BY emerald_cost ASC;
+```
+
+Being able to simplify complex queries like this saves me lots of time, keystrokes, and head-scratching.
+
+# Trade Update CLI Tool
+
+After adding support for additional professions, I made a CLI tool to make updating the costs of existing trades quicker and easier, especially in the case of zombifying and curing villagers. There is also a feature for updating the cured status of uncured villagers. I named this script `update_trade.py`.
+
+The workflow for updating trades using the CLI tool involves first prompting for a valid `villager_id` and then retrieving its `profession` and `cured` status. If uncured (i.e., if `cured` is `0`), the villager's status can be updated next. Following this, a list of all of the villager's trades is retrieved from the appropriate tables. Finally, a specific trade can be selected to update its cost.
+
+The CLI tool remembers the `villager_id` of the last-updated trade to make updating multiple trades from the same villager more efficient. This is especially useful after zombifying and curing villagers, since the permanent discount affects every offer.
+
+Since a lot of the underlying logic used for `update_trade.py` is the same as for `add_trade.py`, I can develop a combined tool in the future to be able to add and update trades without switching scripts.
+
+# ETL Pipeline Change Detection
+
+[Minecraft recently updated](https://www.minecraft.net/en-us/article/minecraft-java-edition-26-1){target="_blank" rel="noopener"} to [version 26.1](https://minecraft.wiki/w/Java_Edition_26.1){target="_blank" rel="noopener"}, making this a good time to add change detection to the ETL pipeline. This way, the process skips reloading the reference tables when the extracted data already matches.
+
+The general workflow is similar to before. First, the latest stable release version is parsed from the version manifest and the corresponding URL for the version-specific JSON is retrieved. Next, the download URL for the client JAR is found from the version-specific JSON and the JAR file is downloaded into memory. The enchantment and job data is then extracted from the JAR in memory and formatted as Pandas DataFrames. Finally, the extracted data is compared with the corresponding tables in the database, if they exist. If they don't exist, or if they don't match the extracted data, they are dropped (if they exist), and the extracted data is loaded into the database.
+
+# Villager Status System
+
+I initially set out to develop a scoring model that would provide a composite score based on factors such as quality, cost, rarity, and uniqueness. I came up with something that I thought was pretty elegant; but then I realized that a completely different approach would work better.
+
+Rather than assigning a score to each villager, I developed a villager status system to help to determine whether to keep a given villager or not.
+
+## Status System Design
+
+For this, there is a balance between simplicity and functionality. In my case, I decided to focus on only librarian trades. Supporting additional professions here would make things significantly more complicated. These complexities outweigh any added benefit this functionality would bring me, especially considering armorers, toolsmiths, and weaponsmiths represent a much smaller proportion than librarians in my database.
+
+For this status system, a librarian's status can be one of four states:
+
+- `keep`---This means the librarian should be kept. A librarian should be kept if it is the sole source of an enchantment, or if it is the source of the best offer for an enchantment.
+- `pending`---This means the librarian hasn't been zombified and cured and, therefore, cannot be evaluated based on the cost of its trades.
+- `redundant`---This means the librarian might not need to be kept because all of its trades are offered by other librarians for better prices.
+- `tied`---This mean the librarian is not already `keep` or `pending` and has at least one trade that is tied for the best cost with another librarian.
+
+In order to determine each librarian's status, there are two levels of evaluation:
+
+1. Trade-level status
+2. Villager-level aggregation
+
+### Trade-Level Status
+
+First, every individual trade is passed through a series of checks to determine its status:
+
+1. Is the trade the only instance of the enchantment in the database, or is it the only instance of the highest level of the enchantment across the database?
+	- If yes, then the trade's status is `keep`.
+	- If no, continue.
+2. Does another librarian offer the same enchantment at a higher level?
+	- If yes, the trade's status is `redundant`.
+	- If no, continue.
+3. Is the librarian offering the trade NOT cured?
+	- If yes, the trade's status is `pending`.
+	- If no, continue.
+4. Is the cost lower than, higher than, or equal to the lowest cost for this exact enchantment and level among all other librarians in the database?
+	- If lower, the trade's status is `keep`.
+	- If higher, the trade's status is `redundant`.
+	- If equal, the trade's status is `tied`.
+
+### Villager-Level Aggregation
+
+After determining the status of each trade, the overall status for each villager can be determined using the following sequence of checks:
+
+1. Does the librarian have one or more trades with the `keep` status?
+	- If yes, the librarian's status is `keep`.
+	- If no, continue.
+2. Does the librarian have one or more trades with the `pending` status?
+	- If yes, the librarian's status is `pending`.
+	- If no, continue.
+3. Does the librarian have one or more trades with the `tied` status?
+	- If yes, the librarian's status is `tied`.
+	- If no, the librarian must only have trades with the `redundant` status, so the librarian's status is also `redundant`.
+
+## Status System Implementation
+
+To implement this status system, I created two new SQL views:
+
+1. `librarian_trade_status_view`---This returns the `trade_status` and `trade_evaluation` (i.e., an explanation of the status) for each enchanted book offer, along with the `villager_id`, `trade_id`, `enchantment`, `enchantment_level`, and `emerald_cost`.
+2. `librarian_villager_status_view`---This returns the `villager_status` of each villager, sorted by `villager_id`.
+
+First, I created `librarian_trade_status_view`:
+
+```sql
+CREATE VIEW librarian_trade_status_view AS
+WITH TradeData AS (
+    SELECT 
+        v.villager_id, v.cured, lt.trade_id, lt.enchantment, 
+        lt.enchantment_level, lt.emerald_cost
+    FROM villagers v
+    JOIN librarian_trades lt ON v.villager_id = lt.villager_id
+),
+TradeAnalysis AS (
+    SELECT 
+        *,
+        MAX(enchantment_level) OVER(PARTITION BY enchantment) AS max_db_level,
+        MIN(emerald_cost) OVER(PARTITION BY enchantment, enchantment_level) AS min_cost,
+        COUNT(villager_id) OVER(PARTITION BY enchantment, enchantment_level, emerald_cost) AS providers_at_this_cost
+    FROM TradeData
+)
+SELECT 
+    villager_id,
+    trade_id,
+    enchantment,
+    enchantment_level,
+    emerald_cost,
+    CASE 
+        -- Status Logic
+        WHEN (SELECT COUNT(DISTINCT villager_id) FROM TradeData t2 WHERE t2.enchantment = TradeAnalysis.enchantment) = 1 THEN 'keep'
+        WHEN enchantment_level = max_db_level AND (SELECT COUNT(DISTINCT villager_id) FROM TradeData t2 WHERE t2.enchantment = TradeAnalysis.enchantment AND t2.enchantment_level = TradeAnalysis.max_db_level) = 1 THEN 'keep'
+        WHEN enchantment_level < max_db_level THEN 'redundant'
+        WHEN cured = 0 THEN 'pending'
+        WHEN emerald_cost = min_cost AND providers_at_this_cost = 1 THEN 'keep'
+        WHEN emerald_cost = min_cost THEN 'tied'
+        ELSE 'redundant'
+    END AS trade_status,
+    CASE 
+        -- Evaluation Logic
+        WHEN enchantment_level < max_db_level THEN 'level ' || max_db_level || ' available'
+        WHEN emerald_cost = min_cost AND providers_at_this_cost = 1 THEN 'best price'
+        WHEN emerald_cost = min_cost AND providers_at_this_cost > 1 THEN 'tied for best price (' || providers_at_this_cost || ' total)'
+        WHEN cured = 0 THEN 'not cured'
+        ELSE (emerald_cost - min_cost) || ' emeralds over best price'
+    END AS trade_evaluation
+FROM TradeAnalysis;
+```
+
+Then, I created `librarian_villager_status_view`:
+
+```sql
+CREATE VIEW librarian_villager_status_view AS
+WITH VillagerAgg AS (
+    SELECT
+        villager_id,
+        SUM(CASE WHEN trade_status = 'keep' THEN 1 ELSE 0 END) AS count_protected,
+        SUM(CASE WHEN trade_status = 'pending' THEN 1 ELSE 0 END) AS count_pending,
+        SUM(CASE WHEN trade_status = 'tied' THEN 1 ELSE 0 END) AS count_tied
+    FROM librarian_trade_status_view
+    GROUP BY villager_id
+)
+SELECT
+    villager_id,
+    CASE
+        WHEN count_protected > 0 THEN 'keep'
+        WHEN count_pending > 0 THEN 'pending'
+        WHEN count_tied > 0 THEN 'tied'
+        ELSE 'redundant'
+    END AS villager_status
+FROM VillagerAgg;
+```
+
+It is important to create `librarian_trade_status_view` before `librarian_villager_status_view` because the latter depends on the former as input.
+
+## Joining Both Tables
+
+Both of these views provide valuable information on their own that can be used to help determine which librarians to keep or not. Individual enchantment offers can easily be compared using `librarian_trade_status_view`, while the status of each librarian can be found using `librarian_villager_status_view`.
+
+However, joining these views together in a single query can help make even more informed decisions by combing the information from both.
+
+For example, the following query returns each trade, including the villager status, enchantment details, cost, and trade evaluation:
+
+```sql
+SELECT 
+    v.villager_status,
+    t.villager_id,
+    t.enchantment,
+    t.enchantment_level,
+    t.emerald_cost,
+    t.trade_evaluation
+FROM librarian_villager_status_view v
+JOIN librarian_trade_status_view t ON v.villager_id = t.villager_id
+ORDER BY 
+    CASE v.villager_status
+        WHEN 'keep' THEN 1
+        WHEN 'tied' THEN 2
+        WHEN 'pending' THEN 3
+        WHEN 'redundant' THEN 4
+    END,
+    t.villager_id, 
+    t.enchantment;
+```
+
+Using queries that join both tables like this makes it possible to further investigate which librarians are worth keeping based on the full details of each trade.
+
+## Results and Impact
+
+At the time I implemented this villager status system, I had 40 total librarians:
+
+- 26 librarians had the `keep` status
+- 9 librarians had the `tied` status
+- 5 librarians had the `redundant` status
+- 0 librarians had the `pending` status (I cured them all before evaluating)
+
+In order to decide whether to remove any of the librarians with the `tied` or `redundant` status, I investigated further by joining both tables. Before making a final decision, it was important to get a full picture of the situation by finding out not just the status of a villager, but also the details of their trades and how they compare to other trades in the database.
+
+After careful consideration, I decided to remove 6 librarians in total: 4 with the `tied` status and 2 with the `redundant` status.
+
+The decision to keep the other `tied` and `redundant` librarians was based on their specific offers, such as if they offered backups of especially valuable enchantments, like [mending](https://minecraft.wiki/w/Mending){target="_blank" rel="noopener"} and [fortune](https://minecraft.wiki/w/Fortune){target="_blank" rel="noopener"}.
+
+I removed the villagers I decided not to keep from the `villagers` table:
+
+```sql
+DELETE FROM villagers
+WHERE villager_id IN ('sp023', 'sp033', 'sp012', 'sp015', 'sp025', 'sp029');
+```
+
+Since I used `ON DELETE CASCADE` for the `villager_id` foreign key relationships in the trade tables, the corresponding rows in the `librarian_trades` table were removed automatically.
+
+# Conclusion
+
+The improvements made to this database system build upon the [previous project](https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/) to increase the integrity, efficiency, and value of the system, supporting the overall goal of better informed decision-making.
+
+Here is a summary of the specific improvements made in this project:
+
+- **Optimized the existing database schema** for integrity and consistency
+- **Expanded support** for additional villager professions
+- **Created a master trades view** to easily view trades across professions
+- **Developed a CLI tool** to efficiently update existing trades
+- **Enhanced the ETL pipeline** with change detection to only update the reference tables if necessary
+- **Implemented a villager status system** to help determine which librarians to keep or not, used to identify 6 low-value librarians to replace
+
+## More Ideas for the Future
+
+I still have a few more ideas for this project that I'd like to implement in another follow-up.
+
+[As mentioned in the previous project](https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/#ideas-for-the-future), I plan to develop an interactive visual dashboard for this database. This would provide a graphical interface for exploring trades, viewing villagers, and quickly identifying high-value offers.
+
+I also plan to integrate `add_trades.py` and `update_trades.py` into a single CLI tool to easily view, add, and update trades, depending on my needs.
+
+I'll also start tracking trades from shepherds whenever I add them to my villager trading hall.
