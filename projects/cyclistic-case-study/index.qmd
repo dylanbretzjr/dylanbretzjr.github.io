@@ -1,5 +1,5 @@
 ---
-title: "Cyclistic Bike-Share Data Analysis Case Study (Python)"
+title: "Case Study: Cyclistic Bike-Share Data Analysis Case Study Using Python"
 author: "Dylan Bretz Jr."
 date: "2026-01-19"
 categories:
