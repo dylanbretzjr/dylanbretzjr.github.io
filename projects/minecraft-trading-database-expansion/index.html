@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Dylan Bretz Jr.">
+<meta name="dcterms.date" content="2026-03-27">
+
+<title>Minecraft Villager Trading Database: System Expansion and Optimization – Dylan Bretz Jr.</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../..//img/logo.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-9cc6fd98019ad86c23c754bcb4eacc15.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b8259827ebabab639238eca798b1cb62.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-9cc6fd98019ad86c23c754bcb4eacc15.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-4d7e1b953788ec6f10698aba6f08a482.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-b5a903ab3d6fbb731bb6c309c11b85f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-4d7e1b953788ec6f10698aba6f08a482.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/iconify-3.0.0/iconify-icon.min.js"></script>
+<link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Minecraft Villager Trading Database: System Expansion and Optimization – Dylan Bretz Jr.">
+<meta property="og:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
+<meta property="og:image" content="https://pchcorral.com/wp-content/uploads/2025/05/b0bd00e0-eaed-11ef-a319-fb4e7360c4ec.png">
+<meta property="og:site_name" content="Dylan Bretz Jr.">
+<meta name="twitter:title" content="Minecraft Villager Trading Database: System Expansion and Optimization – Dylan Bretz Jr.">
+<meta name="twitter:description" content="Dylan Bretz Jr.&nbsp;is a musician and growing data professional dedicated to critical thinking and lifelong learning.">
+<meta name="twitter:image" content="https://pchcorral.com/wp-content/uploads/2025/05/b0bd00e0-eaed-11ef-a319-fb4e7360c4ec.png">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const queryPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkModeDefault = queryPrefersDark.matches;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    queryPrefersDark.addEventListener("change", e => {
+      if(window.localStorage.getItem("quarto-color-scheme") !== null)
+        return;
+      const alternate = e.matches
+      toggleColorMode(alternate);
+      localAlternateSentinel = e.matches ? 'alternate' : 'default'; // this is used alongside local storage!
+      toggleGiscusIfUsed(alternate, darkModeDefault);
+    });
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Dylan Bretz Jr.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://docs.google.com/document/d/e/2PACX-1vRAPxM0I4u_5OEYcn9zzhkxiM-7RCJyFQUNOlqXw0qTFCNofu5yxJ2OIq2L44krB5LJjqXgAu4_gFSX/pub"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../contact.html"> 
+<span class="menu-text">Contact</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/dylanbretzjr/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/dylanbretzjr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="mailto:dylanbretzjr@gmail.com"> 
+<span class="menu-text"><i class="fa-solid fa-envelope" aria-label="envelope"></i></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#supporting-additional-professions" id="toc-supporting-additional-professions" class="nav-link" data-scroll-target="#supporting-additional-professions">Supporting Additional Professions</a>
+  <ul class="collapse">
+  <li><a href="#trade-variability" id="toc-trade-variability" class="nav-link" data-scroll-target="#trade-variability">Trade Variability</a>
+  <ul class="collapse">
+  <li><a href="#color-variability" id="toc-color-variability" class="nav-link" data-scroll-target="#color-variability">Color Variability</a></li>
+  </ul></li>
+  <li><a href="#expanding-and-optimizing-the-database-schema" id="toc-expanding-and-optimizing-the-database-schema" class="nav-link" data-scroll-target="#expanding-and-optimizing-the-database-schema">Expanding and Optimizing the Database Schema</a>
+  <ul class="collapse">
+  <li><a href="#updating-existing-tables" id="toc-updating-existing-tables" class="nav-link" data-scroll-target="#updating-existing-tables">Updating Existing Tables</a></li>
+  <li><a href="#altering-tables-using-sqlite" id="toc-altering-tables-using-sqlite" class="nav-link" data-scroll-target="#altering-tables-using-sqlite">Altering Tables Using SQLite</a></li>
+  <li><a href="#tweaking-the-villager-id-system" id="toc-tweaking-the-villager-id-system" class="nav-link" data-scroll-target="#tweaking-the-villager-id-system">Tweaking the Villager ID System</a></li>
+  <li><a href="#creating-additional-tables" id="toc-creating-additional-tables" class="nav-link" data-scroll-target="#creating-additional-tables">Creating Additional Tables</a></li>
+  </ul></li>
+  <li><a href="#updating-the-data-entry-cli-tool" id="toc-updating-the-data-entry-cli-tool" class="nav-link" data-scroll-target="#updating-the-data-entry-cli-tool">Updating the Data Entry CLI Tool</a></li>
+  </ul></li>
+  <li><a href="#master-trades-view" id="toc-master-trades-view" class="nav-link" data-scroll-target="#master-trades-view">Master Trades View</a>
+  <ul class="collapse">
+  <li><a href="#simplifying-complex-queries" id="toc-simplifying-complex-queries" class="nav-link" data-scroll-target="#simplifying-complex-queries">Simplifying Complex Queries</a></li>
+  </ul></li>
+  <li><a href="#trade-update-cli-tool" id="toc-trade-update-cli-tool" class="nav-link" data-scroll-target="#trade-update-cli-tool">Trade Update CLI Tool</a></li>
+  <li><a href="#etl-pipeline-change-detection" id="toc-etl-pipeline-change-detection" class="nav-link" data-scroll-target="#etl-pipeline-change-detection">ETL Pipeline Change Detection</a></li>
+  <li><a href="#villager-status-system" id="toc-villager-status-system" class="nav-link" data-scroll-target="#villager-status-system">Villager Status System</a>
+  <ul class="collapse">
+  <li><a href="#status-system-design" id="toc-status-system-design" class="nav-link" data-scroll-target="#status-system-design">Status System Design</a>
+  <ul class="collapse">
+  <li><a href="#trade-level-status" id="toc-trade-level-status" class="nav-link" data-scroll-target="#trade-level-status">Trade-Level Status</a></li>
+  <li><a href="#villager-level-aggregation" id="toc-villager-level-aggregation" class="nav-link" data-scroll-target="#villager-level-aggregation">Villager-Level Aggregation</a></li>
+  </ul></li>
+  <li><a href="#status-system-implementation" id="toc-status-system-implementation" class="nav-link" data-scroll-target="#status-system-implementation">Status System Implementation</a></li>
+  <li><a href="#joining-both-tables" id="toc-joining-both-tables" class="nav-link" data-scroll-target="#joining-both-tables">Joining Both Tables</a></li>
+  <li><a href="#results-and-impact" id="toc-results-and-impact" class="nav-link" data-scroll-target="#results-and-impact">Results and Impact</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#more-ideas-for-the-future" id="toc-more-ideas-for-the-future" class="nav-link" data-scroll-target="#more-ideas-for-the-future">More Ideas for the Future</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Minecraft Villager Trading Database: System Expansion and Optimization</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">minecraft</div>
+    <div class="quarto-category">data engineering</div>
+    <div class="quarto-category">database normalization</div>
+    <div class="quarto-category">rdbms</div>
+    <div class="quarto-category">sql</div>
+    <div class="quarto-category">sqlite</div>
+    <div class="quarto-category">python</div>
+    <div class="quarto-category">etl</div>
+    <div class="quarto-category">cli-tool</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Dylan Bretz Jr. </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026-03-27</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://pchcorral.com/wp-content/uploads/2025/05/b0bd00e0-eaed-11ef-a319-fb4e7360c4ec.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Villagers from _A Minecraft Movie_ (2025)" width="750"></p>
+</figure>
+</div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>This project focuses on expanding and optimizing the Minecraft villager trading database system I built in a <a href="https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/" target="_blank" rel="noopener">previous project</a>.</p>
+<p>In particular, this project involved the following improvements:</p>
+<ul>
+<li><strong>Optimizing the existing database schema</strong> for integrity and consistency</li>
+<li><strong>Expanding support</strong> for additional villager professions</li>
+<li><strong>Creating a master trades view</strong> to easily view trades across professions</li>
+<li><strong>Developing a CLI tool</strong> to efficiently update existing trades</li>
+<li><strong>Enhancing the ETL pipeline</strong> with change detection to only update the reference tables if necessary</li>
+<li><strong>Implementing a villager status system</strong> to help determine which librarians to keep or not</li>
+</ul>
+<p>These improvements increase the integrity, efficiency, and value of this database system, supporting better informed decision-making. As a result, I was able to identify 6 low-value librarians in my database to replace.</p>
+</section>
+<section id="supporting-additional-professions" class="level1">
+<h1>Supporting Additional Professions</h1>
+<p>For me, this database is most useful for managing librarian villager trades. <a href="https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/#librarian-villagers" target="_blank" rel="noopener">As described in the previous project</a>, trading with librarians is especially valuable. Not only this, but I also have more librarians than any other profession, due to both the value and variety of their enchanted book trades. For these reasons, managing librarian trades is the primary purpose of this database.</p>
+<p>That said, I designed the database to be flexible to enable support for additional villager professions as needed.</p>
+<section id="trade-variability" class="level2">
+<h2 class="anchored" data-anchor-id="trade-variability">Trade Variability</h2>
+<p>It really isn’t necessary to track every trade for every villager profession. Many trades simply aren’t very good or worth tracking, and which trades are most useful really depends on the player and the specific circumstances. When tracking inherently becomes more useful is when there is more variability between trades.</p>
+<p>For example, librarians sell enchanted books, which are randomly selected from a set of 40 enchantments, and both the enchantment level and the cost are also randomly determined.</p>
+<p>Similarly, <a href="https://minecraft.wiki/w/Armorer" target="_blank" rel="noopener">armorers</a>, <a href="https://minecraft.wiki/w/Toolsmith" target="_blank" rel="noopener">toolsmiths</a>, and <a href="https://minecraft.wiki/w/Weaponsmith" target="_blank" rel="noopener">weaponsmiths</a> all sell useful items that come with random enchantments and vary in enchantment level and cost:</p>
+<ul>
+<li><strong>Armorers</strong> sell enchanted diamond boots, leggings, chestplates, and helmets.</li>
+<li><strong>Toolsmiths</strong> sell enchanted diamond axes, shovels, and pickaxes.</li>
+<li><strong>Weaponsmiths</strong> sell enchanted diamond axes and swords.</li>
+</ul>
+<p>When trades vary in enchantment and cost like this, it becomes difficult to remember which villager offers which specific trade, making it especially useful to track these trades using a database.</p>
+<section id="color-variability" class="level3">
+<h3 class="anchored" data-anchor-id="color-variability">Color Variability</h3>
+<p>Another aspect of trade variability worth quickly mentioning is item color.</p>
+<p><a href="https://minecraft.wiki/w/Shepherd" target="_blank" rel="noopener">Shepherds</a> offer colored wool/carpets, beds, and banners. There are 16 possible colors for each of these offers. Since the color of each offer is random, the same villager can offer different colors for different items. This makes tracking these trades also particularly useful, especially if you use a lot of colored wool/carpets, beds, or banners in your builds.</p>
+<p>While <a href="https://minecraft.wiki/w/Mason" target="_blank" rel="noopener">masons</a> also offer variable color trades, they only have one trade each where the color is variable, making it easy enough to manage without an external system. Simply organizing masons by color and/or displaying the block color near their trading station works well.</p>
+</section>
+</section>
+<section id="expanding-and-optimizing-the-database-schema" class="level2">
+<h2 class="anchored" data-anchor-id="expanding-and-optimizing-the-database-schema">Expanding and Optimizing the Database Schema</h2>
+<p>I decided to expand the database schema to support tracking armorer, toolsmith, and weaponsmith trades, since I already have these professions in my trading hall. In the future, I’ll likely also add support for shepherds.</p>
+<section id="updating-existing-tables" class="level3">
+<h3 class="anchored" data-anchor-id="updating-existing-tables">Updating Existing Tables</h3>
+<p><a href="https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/#database-schema" target="_blank" rel="noopener">The database schema I implemented in the previous project</a> can already be expanded to support the additional required tables as-is. However, I noticed a few opportunities for minor improvements to the existing schema—mainly adding additional verification logic in the form of <code>NOT NULL</code> and <code>CHECK()</code>.</p>
+<p>For the <code>librarian_trades</code> table, I added <code>ON DELETE CASCADE</code> to the <code>villager_id</code> foreign key relationship. This way, when a librarian is removed from the <code>villagers</code> table, the corresponding rows are dropped from the <code>librarian_trades</code> table.</p>
+<p>I also decided to change <code>cost_emeralds</code> to <code>emerald_cost</code>. I made sure to update the data entry CLI-tool accordingly.</p>
+<p>Additionally, I added a new <code>cured</code> column to the <code>villagers</code> table to track whether villagers have been zombified and cured or not. Since curing zombified villagers permanently discounts the costs of their trades, knowing whether or not a villager has been zombified and cured is important for comparing offers, which will be crucial later when determining each villager’s status.</p>
+<p>The <code>cured</code> column functions as a boolean. <a href="https://www.sqlite.org/datatype3.html" target="_blank" rel="noopener">SQLite3 doesn’t have a separate boolean datatype</a>, so I used integers where <code>0</code> represents ‘false’ and <code>1</code> represents ‘true’. I enforce integrity for this column by specifying <code>"cured" INTEGER NOT NULL DEFAULT 0 CHECK(cured in(0, 1))</code>, which ensures the only possible values that can be stored in the <code>cured</code> columns are <code>0</code> and <code>1</code>, and sets the default value to <code>0</code> (false).</p>
+</section>
+<section id="altering-tables-using-sqlite" class="level3">
+<h3 class="anchored" data-anchor-id="altering-tables-using-sqlite">Altering Tables Using SQLite</h3>
+<p>Since I’m using SQLite as my database engine, changing the table definitions isn’t as straightforward as with PostgreSQL, for instance.</p>
+<p>In PostgreSQL, tables can easily be altered like so:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> locations</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">COLUMN</span> x_coord <span class="kw">SET</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">COLUMN</span> y_coord <span class="kw">SET</span> <span class="kw">NOT</span> <span class="kw">NULl</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>However, the process with SQLite is more involved because there are <a href="https://www.sqlite.org/lang_altertable.html" target="_blank" rel="noopener">limitations in how tables can be altered or modified</a>.</p>
+<p>The workaround involves (1) creating a new table, (2) copying the data from the old table to the new table, (3) dropping the old table, and (4) renaming the new table:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">BEGIN</span> <span class="kw">TRANSACTION</span>;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Creating a new table</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> locations_new (</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    location TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    x_coord <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    z_coord <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Copying the data from the old table to the new table</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> locations_new (location, x_coord, z_coord)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> location, x_coord, z_coord</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> locations;</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Dropping the old table</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> locations;</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">-- 4. Renaming the new table</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> locations_new <span class="kw">RENAME</span> <span class="kw">TO</span> locations;</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="kw">COMMIT</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The result is the following updated table definitions:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="ot">"locations"</span> (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"location"</span>  TEXT,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"x_coord"</span>   <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"z_coord"</span>   <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(<span class="ot">"location"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="ot">"villagers"</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"villager_id"</span>   TEXT,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"location"</span>  TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"job"</span>   TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"cured"</span> <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="dv">0</span> <span class="kw">CHECK</span>(cured <span class="kw">IN</span> (<span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(<span class="ot">"villager_id"</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(<span class="ot">"job"</span>) <span class="kw">REFERENCES</span> <span class="ot">"jobs"</span>(<span class="ot">"job"</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(<span class="ot">"location"</span>) <span class="kw">REFERENCES</span> <span class="ot">"locations"</span>(<span class="ot">"location"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="ot">"librarian_trades"</span> (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"trade_id"</span>  <span class="dt">INTEGER</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"villager_id"</span>   TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"enchantment"</span>   TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"enchantment_level"</span> <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(enchantment_level <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">5</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"emerald_cost"</span>  <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(emerald_cost <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">64</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(<span class="ot">"trade_id"</span> AUTOINCREMENT),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(<span class="ot">"enchantment"</span>) <span class="kw">REFERENCES</span> <span class="ot">"enchantments"</span>(<span class="ot">"enchantment"</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(<span class="ot">"villager_id"</span>) <span class="kw">REFERENCES</span> <span class="ot">"villagers"</span>(<span class="ot">"villager_id"</span>) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="ot">"enchantments"</span> (</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"enchantment"</span>   TEXT,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"max_level"</span> <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(max_level <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">5</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"supported_items"</span>   TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(<span class="ot">"enchantment"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="ot">"jobs"</span> (</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">"job"</span>   TEXT,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(<span class="ot">"job"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>jobs</code> table didn’t actually change—I just included it here to be thorough.</p>
+</section>
+<section id="tweaking-the-villager-id-system" class="level3">
+<h3 class="anchored" data-anchor-id="tweaking-the-villager-id-system">Tweaking the Villager ID System</h3>
+<p>In addition to updating these tables, I decided to slightly modify the <code>villager_id</code> system.</p>
+<p>Initially, I used a three letter location code concatenated with a three digit code representing the villager number at that location (e.g., <code>spa001</code> for the fist villager at <code>spawn</code>). I’ve now opted to use a two letter location code instead (<code>spa001</code> changes to <code>sp001</code>).</p>
+<p>I kept the three digit villager number as-is, since, in my case, two digits don’t provide enough combinations.</p>
+<p>I created a new Python script to automate migrating the villager IDs to the new system using <a href="https://docs.python.org/3/library/re.html">regular expressions</a>, which I named <code>migrate_ids.py</code>.</p>
+</section>
+<section id="creating-additional-tables" class="level3">
+<h3 class="anchored" data-anchor-id="creating-additional-tables">Creating Additional Tables</h3>
+<p>With the existing tables optimized, I moved on to creating the additional required tables for armorer, toolsmith, and weaponsmith trades. The schema for these trades is slightly more complex than for the librarian trades.</p>
+<p>In the case of librarians, there is only one enchantment per enchanted book. For armorers, toolsmiths, and weaponsmiths, each item can contain multiple enchantments, which adds complexity to the system.</p>
+<p>In order to maintain proper normalization, the items and the enchantments have to be split between two tables.</p>
+<p>The <code>armorer_trades</code>, <code>toolsmith_trades</code>, <code>weaponsmith_trades</code> tables record the associated item trades for each profession and their cost:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> armorer_trades (</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    trade_id <span class="dt">INTEGER</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span> AUTOINCREMENT,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    villager_id TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    item TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(item <span class="kw">IN</span> (<span class="st">'diamond_boots'</span>, <span class="st">'diamond_leggings'</span>, <span class="st">'diamond_chestplate'</span>, <span class="st">'diamond_helmet'</span>)),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    emerald_cost <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(emerald_cost <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">64</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(villager_id) <span class="kw">REFERENCES</span> villagers(villager_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">UNIQUE</span>(villager_id, item)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> toolsmith_trades (</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    trade_id <span class="dt">INTEGER</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span> AUTOINCREMENT,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    villager_id TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    item TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(item <span class="kw">IN</span> (<span class="st">'diamond_axe'</span>, <span class="st">'diamond_shovel'</span>, <span class="st">'diamond_pickaxe'</span>)),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    emerald_cost <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(emerald_cost <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">64</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(villager_id) <span class="kw">REFERENCES</span> villagers(villager_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">UNIQUE</span>(villager_id, item)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> weaponsmith_trades (</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    trade_id <span class="dt">INTEGER</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span> AUTOINCREMENT,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    villager_id TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    item TEXT <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(item <span class="kw">IN</span> (<span class="st">'diamond_axe'</span>, <span class="st">'diamond_sword'</span>)),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    emerald_cost <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(emerald_cost <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">64</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(villager_id) <span class="kw">REFERENCES</span> villagers(villager_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">UNIQUE</span>(villager_id, item)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>armorer_trade_enchantments</code>, <code>toolsmith_trade_enchantments</code>, and <code>weaponsmith_trade_enchantments</code> tables link each item to at least one enchantment and its level:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> armorer_trade_enchantments (</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    trade_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    enchantment TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    enchantment_level <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(enchantment_level <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">5</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(trade_id, enchantment),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(trade_id) <span class="kw">REFERENCES</span> armorer_trades(trade_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(enchantment) <span class="kw">REFERENCES</span> enchantments(enchantment)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> toolsmith_trade_enchantments (</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    trade_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    enchantment TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    enchantment_level <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(enchantment_level <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">5</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(trade_id, enchantment),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(trade_id) <span class="kw">REFERENCES</span> toolsmith_trades(trade_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(enchantment) <span class="kw">REFERENCES</span> enchantments(enchantment)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> weaponsmith_trade_enchantments (</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    trade_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    enchantment TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    enchantment_level <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">CHECK</span>(enchantment_level <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">5</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(trade_id, enchantment),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(trade_id) <span class="kw">REFERENCES</span> weaponsmith_trades(trade_id) <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(enchantment) <span class="kw">REFERENCES</span> enchantments(enchantment)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>As with the entire database schema, foreign key relationships and verification logic like <code>NOT NULl</code> and <code>CHECK()</code> improve the integrity of these tables.</p>
+<p>Using <code>ON DELETE CASCADE</code> ensures that removing a trade from the trade tables (<code>armorer_trades</code>, <code>toolsmith_trades</code>, <code>weaponsmith_trades</code>) will remove the corresponding enchantments from the trade enchantment tables (<code>armorer_trade_enchantments</code>, <code>toolsmith_trade_enchantments</code>, <code>weaponsmith_trade_enchantments</code>). Similarly, removing an armorer, toolsmith, or weaponsmith from the <code>villagers</code> table will remove all corresponding rows from both the trades and trade enchantment tables.</p>
+</section>
+</section>
+<section id="updating-the-data-entry-cli-tool" class="level2">
+<h2 class="anchored" data-anchor-id="updating-the-data-entry-cli-tool">Updating the Data Entry CLI Tool</h2>
+<p>Next, I updated the CLI-based data entry tool to support the armorer, toolsmith, and weaponsmith professions. I deprecated the old <code>add_lib_trade.py</code> script and replaced it with a new <code>add_trade.py</code> script.</p>
+<p>There are a few key changes made with the <code>add_trade.py</code> script that add support for these professions. First, when adding a new villager to the system, the profession is specified from a validated list (<code>librarian</code>, <code>armorer</code>, <code>toolsmith</code>, or <code>weaponsmith</code>). Also, when adding a new trade, the item is specified from a validated list depending on the profession.</p>
+<p>In addition to support for these professions, I added a feature to set the <code>cured</code> status (<code>0</code> or <code>1</code>) when adding new villagers using <code>add_trade.py</code>.</p>
+<p>These changes support efficient data entry with contextual input validation for all the professions I track with this database.</p>
+</section>
+</section>
+<section id="master-trades-view" class="level1">
+<h1>Master Trades View</h1>
+<p>With the database schema updated, I decided to create a new SQL view to be able to easily view and query all trades across all professions. Creating this view is more involved because the information for the new professions is split across multiple tables, and the columns don’t line up with the <code>librarian_trades</code> table.</p>
+<p>In order to combine all these tables into a single view, I first built four tables with matching columns (one for each profession), joining item and enchantment tables where necessary. I then stacked these tables on top of each other using <code>UNION ALL</code>.</p>
+<p>Here is the SQL code used to create this view:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> master_trades_view <span class="kw">AS</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Librarian Trades</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    v.location,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    v.villager_id,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    v.job,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'enchanted_book'</span> <span class="kw">AS</span> item,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    lt.enchantment <span class="op">||</span> <span class="st">' '</span> <span class="op">||</span> lt.enchantment_level <span class="kw">AS</span> enchantments,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    lt.emerald_cost</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> villagers v</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> librarian_trades lt <span class="kw">ON</span> v.villager_id <span class="op">=</span> lt.villager_id</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Armorer Trades</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    v.location,</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    v.villager_id,</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    v.job,</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">at</span>.item,</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(GROUP_CONCAT(ate.enchantment <span class="op">||</span> <span class="st">' '</span> <span class="op">||</span> ate.enchantment_level, <span class="st">', '</span> <span class="kw">ORDER</span> <span class="kw">BY</span> ate.enchantment <span class="kw">ASC</span>), <span class="st">'None'</span>) <span class="kw">AS</span> enchantments,</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">at</span>.emerald_cost</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> villagers v</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> armorer_trades <span class="kw">at</span> <span class="kw">ON</span> v.villager_id <span class="op">=</span> <span class="kw">at</span>.villager_id</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> armorer_trade_enchantments ate <span class="kw">ON</span> <span class="kw">at</span>.trade_id <span class="op">=</span> ate.trade_id</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> <span class="kw">at</span>.trade_id, v.location, v.villager_id, v.job, <span class="kw">at</span>.item, <span class="kw">at</span>.emerald_cost</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Toolsmith Trades</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    v.location,</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    v.villager_id,</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    v.job,</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    tt.item,</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(GROUP_CONCAT(tte.enchantment <span class="op">||</span> <span class="st">' '</span> <span class="op">||</span> tte.enchantment_level, <span class="st">', '</span> <span class="kw">ORDER</span> <span class="kw">BY</span> tte.enchantment <span class="kw">ASC</span>), <span class="st">'None'</span>) <span class="kw">AS</span> enchantments,</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    tt.emerald_cost</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> villagers v</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> toolsmith_trades tt <span class="kw">ON</span> v.villager_id <span class="op">=</span> tt.villager_id</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> toolsmith_trade_enchantments tte <span class="kw">ON</span> tt.trade_id <span class="op">=</span> tte.trade_id</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> tt.trade_id, v.location, v.villager_id, v.job, tt.item, tt.emerald_cost</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a><span class="co">-- 4. Weaponsmith Trades</span></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>    v.location,</span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>    v.villager_id,</span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>    v.job,</span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>    wt.item,</span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(GROUP_CONCAT(wte.enchantment <span class="op">||</span> <span class="st">' '</span> <span class="op">||</span> wte.enchantment_level, <span class="st">', '</span> <span class="kw">ORDER</span> <span class="kw">BY</span> wte.enchantment <span class="kw">ASC</span>), <span class="st">'None'</span>) <span class="kw">AS</span> enchantments,</span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>    wt.emerald_cost</span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> villagers v</span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> weaponsmith_trades wt <span class="kw">ON</span> v.villager_id <span class="op">=</span> wt.villager_id</span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> weaponsmith_trade_enchantments wte <span class="kw">ON</span> wt.trade_id <span class="op">=</span> wte.trade_id</span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> wt.trade_id, v.location, v.villager_id, v.job, wt.item, wt.emerald_cost;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="simplifying-complex-queries" class="level2">
+<h2 class="anchored" data-anchor-id="simplifying-complex-queries">Simplifying Complex Queries</h2>
+<p>Using <code>master_trades_view</code> greatly simplifies querying trades across professions.</p>
+<p>For example, this query finds all trades where the item being sold is a diamond axe (sorted by lowest price) using <code>master_trades_view</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> master_trades_view</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> item <span class="op">=</span> <span class="st">'diamond_axe'</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> emerald_cost <span class="kw">ASC</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This example is particularly useful, since both toolsmiths and weaponsmiths sell diamond axes.</p>
+<p>Without using <code>master_trades_view</code>, I would have to write a much more complex query to return the same information:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> combined_trades <span class="kw">AS</span> (</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- Toolsmith Trades</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        tt.trade_id,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        tt.villager_id,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        tt.item,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        tt.emerald_cost,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COALESCE</span>(GROUP_CONCAT(tte.enchantment <span class="op">||</span> <span class="st">' '</span> <span class="op">||</span> tte.enchantment_level, <span class="st">', '</span> <span class="kw">ORDER</span> <span class="kw">BY</span> tte.enchantment <span class="kw">ASC</span>), <span class="st">'None'</span>) <span class="kw">AS</span> enchantments</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> toolsmith_trades <span class="kw">AS</span> tt</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> toolsmith_trade_enchantments <span class="kw">AS</span> tte</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> tt.trade_id <span class="op">=</span> tte.trade_id</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> tt.trade_id</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- Weaponsmith Trades</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        wt.trade_id,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>        wt.villager_id,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>        wt.item,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        wt.emerald_cost,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COALESCE</span>(GROUP_CONCAT(wte.enchantment <span class="op">||</span> <span class="st">' '</span> <span class="op">||</span> wte.enchantment_level, <span class="st">', '</span> <span class="kw">ORDER</span> <span class="kw">BY</span> wte.enchantment <span class="kw">ASC</span>), <span class="st">'None'</span>) <span class="kw">AS</span> enchantments</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> weaponsmith_trades <span class="kw">AS</span> wt</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> weaponsmith_trade_enchantments <span class="kw">AS</span> wte</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> wt.trade_id <span class="op">=</span> wte.trade_id</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> wt.trade_id</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co">-- Filter and sort the combined results</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    v.location,</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    v.villager_id,</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>    v.job,</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>    ct.item,</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>    ct.enchantments,</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    ct.emerald_cost</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> combined_trades <span class="kw">AS</span> ct</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> villagers <span class="kw">AS</span> v</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> ct.villager_id <span class="op">=</span> v.villager_id</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> item <span class="op">=</span> <span class="st">'diamond_axe'</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> emerald_cost <span class="kw">ASC</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Being able to simplify complex queries like this saves me lots of time, keystrokes, and head-scratching.</p>
+</section>
+</section>
+<section id="trade-update-cli-tool" class="level1">
+<h1>Trade Update CLI Tool</h1>
+<p>After adding support for additional professions, I made a CLI tool to make updating the costs of existing trades quicker and easier, especially in the case of zombifying and curing villagers. There is also a feature for updating the cured status of uncured villagers. I named this script <code>update_trade.py</code>.</p>
+<p>The workflow for updating trades using the CLI tool involves first prompting for a valid <code>villager_id</code> and then retrieving its <code>profession</code> and <code>cured</code> status. If uncured (i.e., if <code>cured</code> is <code>0</code>), the villager’s status can be updated next. Following this, a list of all of the villager’s trades is retrieved from the appropriate tables. Finally, a specific trade can be selected to update its cost.</p>
+<p>The CLI tool remembers the <code>villager_id</code> of the last-updated trade to make updating multiple trades from the same villager more efficient. This is especially useful after zombifying and curing villagers, since the permanent discount affects every offer.</p>
+<p>Since a lot of the underlying logic used for <code>update_trade.py</code> is the same as for <code>add_trade.py</code>, I can develop a combined tool in the future to be able to add and update trades without switching scripts.</p>
+</section>
+<section id="etl-pipeline-change-detection" class="level1">
+<h1>ETL Pipeline Change Detection</h1>
+<p><a href="https://www.minecraft.net/en-us/article/minecraft-java-edition-26-1" target="_blank" rel="noopener">Minecraft recently updated</a> to <a href="https://minecraft.wiki/w/Java_Edition_26.1" target="_blank" rel="noopener">version 26.1</a>, making this a good time to add change detection to the ETL pipeline. This way, the process skips reloading the reference tables when the extracted data already matches.</p>
+<p>The general workflow is similar to before. First, the latest stable release version is parsed from the version manifest and the corresponding URL for the version-specific JSON is retrieved. Next, the download URL for the client JAR is found from the version-specific JSON and the JAR file is downloaded into memory. The enchantment and job data is then extracted from the JAR in memory and formatted as Pandas DataFrames. Finally, the extracted data is compared with the corresponding tables in the database, if they exist. If they don’t exist, or if they don’t match the extracted data, they are dropped (if they exist), and the extracted data is loaded into the database.</p>
+</section>
+<section id="villager-status-system" class="level1">
+<h1>Villager Status System</h1>
+<p>I initially set out to develop a scoring model that would provide a composite score based on factors such as quality, cost, rarity, and uniqueness. I came up with something that I thought was pretty elegant; but then I realized that a completely different approach would work better.</p>
+<p>Rather than assigning a score to each villager, I developed a villager status system to help to determine whether to keep a given villager or not.</p>
+<section id="status-system-design" class="level2">
+<h2 class="anchored" data-anchor-id="status-system-design">Status System Design</h2>
+<p>For this, there is a balance between simplicity and functionality. In my case, I decided to focus on only librarian trades. Supporting additional professions here would make things significantly more complicated. These complexities outweigh any added benefit this functionality would bring me, especially considering armorers, toolsmiths, and weaponsmiths represent a much smaller proportion than librarians in my database.</p>
+<p>For this status system, a librarian’s status can be one of four states:</p>
+<ul>
+<li><code>keep</code>—This means the librarian should be kept. A librarian should be kept if it is the sole source of an enchantment, or if it is the source of the best offer for an enchantment.</li>
+<li><code>pending</code>—This means the librarian hasn’t been zombified and cured and, therefore, cannot be evaluated based on the cost of its trades.</li>
+<li><code>redundant</code>—This means the librarian might not need to be kept because all of its trades are offered by other librarians for better prices.</li>
+<li><code>tied</code>—This mean the librarian is not already <code>keep</code> or <code>pending</code> and has at least one trade that is tied for the best cost with another librarian.</li>
+</ul>
+<p>In order to determine each librarian’s status, there are two levels of evaluation:</p>
+<ol type="1">
+<li>Trade-level status</li>
+<li>Villager-level aggregation</li>
+</ol>
+<section id="trade-level-status" class="level3">
+<h3 class="anchored" data-anchor-id="trade-level-status">Trade-Level Status</h3>
+<p>First, every individual trade is passed through a series of checks to determine its status:</p>
+<ol type="1">
+<li>Is the trade the only instance of the enchantment in the database, or is it the only instance of the highest level of the enchantment across the database?
+<ul>
+<li>If yes, then the trade’s status is <code>keep</code>.</li>
+<li>If no, continue.</li>
+</ul></li>
+<li>Does another librarian offer the same enchantment at a higher level?
+<ul>
+<li>If yes, the trade’s status is <code>redundant</code>.</li>
+<li>If no, continue.</li>
+</ul></li>
+<li>Is the librarian offering the trade NOT cured?
+<ul>
+<li>If yes, the trade’s status is <code>pending</code>.</li>
+<li>If no, continue.</li>
+</ul></li>
+<li>Is the cost lower than, higher than, or equal to the lowest cost for this exact enchantment and level among all other librarians in the database?
+<ul>
+<li>If lower, the trade’s status is <code>keep</code>.</li>
+<li>If higher, the trade’s status is <code>redundant</code>.</li>
+<li>If equal, the trade’s status is <code>tied</code>.</li>
+</ul></li>
+</ol>
+</section>
+<section id="villager-level-aggregation" class="level3">
+<h3 class="anchored" data-anchor-id="villager-level-aggregation">Villager-Level Aggregation</h3>
+<p>After determining the status of each trade, the overall status for each villager can be determined using the following sequence of checks:</p>
+<ol type="1">
+<li>Does the librarian have one or more trades with the <code>keep</code> status?
+<ul>
+<li>If yes, the librarian’s status is <code>keep</code>.</li>
+<li>If no, continue.</li>
+</ul></li>
+<li>Does the librarian have one or more trades with the <code>pending</code> status?
+<ul>
+<li>If yes, the librarian’s status is <code>pending</code>.</li>
+<li>If no, continue.</li>
+</ul></li>
+<li>Does the librarian have one or more trades with the <code>tied</code> status?
+<ul>
+<li>If yes, the librarian’s status is <code>tied</code>.</li>
+<li>If no, the librarian must only have trades with the <code>redundant</code> status, so the librarian’s status is also <code>redundant</code>.</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="status-system-implementation" class="level2">
+<h2 class="anchored" data-anchor-id="status-system-implementation">Status System Implementation</h2>
+<p>To implement this status system, I created two new SQL views:</p>
+<ol type="1">
+<li><code>librarian_trade_status_view</code>—This returns the <code>trade_status</code> and <code>trade_evaluation</code> (i.e., an explanation of the status) for each enchanted book offer, along with the <code>villager_id</code>, <code>trade_id</code>, <code>enchantment</code>, <code>enchantment_level</code>, and <code>emerald_cost</code>.</li>
+<li><code>librarian_villager_status_view</code>—This returns the <code>villager_status</code> of each villager, sorted by <code>villager_id</code>.</li>
+</ol>
+<p>First, I created <code>librarian_trade_status_view</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> librarian_trade_status_view <span class="kw">AS</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> TradeData <span class="kw">AS</span> (</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        v.villager_id, v.cured, lt.trade_id, lt.enchantment, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        lt.enchantment_level, lt.emerald_cost</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> villagers v</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> librarian_trades lt <span class="kw">ON</span> v.villager_id <span class="op">=</span> lt.villager_id</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>),</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>TradeAnalysis <span class="kw">AS</span> (</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>,</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MAX</span>(enchantment_level) <span class="kw">OVER</span>(<span class="kw">PARTITION</span> <span class="kw">BY</span> enchantment) <span class="kw">AS</span> max_db_level,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MIN</span>(emerald_cost) <span class="kw">OVER</span>(<span class="kw">PARTITION</span> <span class="kw">BY</span> enchantment, enchantment_level) <span class="kw">AS</span> min_cost,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COUNT</span>(villager_id) <span class="kw">OVER</span>(<span class="kw">PARTITION</span> <span class="kw">BY</span> enchantment, enchantment_level, emerald_cost) <span class="kw">AS</span> providers_at_this_cost</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> TradeData</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    villager_id,</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    trade_id,</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    enchantment,</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    enchantment_level,</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    emerald_cost,</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span> </span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">-- Status Logic</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> (<span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> villager_id) <span class="kw">FROM</span> TradeData t2 <span class="kw">WHERE</span> t2.enchantment <span class="op">=</span> TradeAnalysis.enchantment) <span class="op">=</span> <span class="dv">1</span> <span class="cf">THEN</span> <span class="st">'keep'</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> enchantment_level <span class="op">=</span> max_db_level <span class="kw">AND</span> (<span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> villager_id) <span class="kw">FROM</span> TradeData t2 <span class="kw">WHERE</span> t2.enchantment <span class="op">=</span> TradeAnalysis.enchantment <span class="kw">AND</span> t2.enchantment_level <span class="op">=</span> TradeAnalysis.max_db_level) <span class="op">=</span> <span class="dv">1</span> <span class="cf">THEN</span> <span class="st">'keep'</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> enchantment_level <span class="op">&lt;</span> max_db_level <span class="cf">THEN</span> <span class="st">'redundant'</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> cured <span class="op">=</span> <span class="dv">0</span> <span class="cf">THEN</span> <span class="st">'pending'</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> emerald_cost <span class="op">=</span> min_cost <span class="kw">AND</span> providers_at_this_cost <span class="op">=</span> <span class="dv">1</span> <span class="cf">THEN</span> <span class="st">'keep'</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> emerald_cost <span class="op">=</span> min_cost <span class="cf">THEN</span> <span class="st">'tied'</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">'redundant'</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> trade_status,</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span> </span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>        <span class="co">-- Evaluation Logic</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> enchantment_level <span class="op">&lt;</span> max_db_level <span class="cf">THEN</span> <span class="st">'level '</span> <span class="op">||</span> max_db_level <span class="op">||</span> <span class="st">' available'</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> emerald_cost <span class="op">=</span> min_cost <span class="kw">AND</span> providers_at_this_cost <span class="op">=</span> <span class="dv">1</span> <span class="cf">THEN</span> <span class="st">'best price'</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> emerald_cost <span class="op">=</span> min_cost <span class="kw">AND</span> providers_at_this_cost <span class="op">&gt;</span> <span class="dv">1</span> <span class="cf">THEN</span> <span class="st">'tied for best price ('</span> <span class="op">||</span> providers_at_this_cost <span class="op">||</span> <span class="st">' total)'</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> cured <span class="op">=</span> <span class="dv">0</span> <span class="cf">THEN</span> <span class="st">'not cured'</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> (emerald_cost <span class="op">-</span> min_cost) <span class="op">||</span> <span class="st">' emeralds over best price'</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> trade_evaluation</span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> TradeAnalysis;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then, I created <code>librarian_villager_status_view</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> librarian_villager_status_view <span class="kw">AS</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> VillagerAgg <span class="kw">AS</span> (</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        villager_id,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">SUM</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> trade_status <span class="op">=</span> <span class="st">'keep'</span> <span class="cf">THEN</span> <span class="dv">1</span> <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span>) <span class="kw">AS</span> count_protected,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">SUM</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> trade_status <span class="op">=</span> <span class="st">'pending'</span> <span class="cf">THEN</span> <span class="dv">1</span> <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span>) <span class="kw">AS</span> count_pending,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">SUM</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> trade_status <span class="op">=</span> <span class="st">'tied'</span> <span class="cf">THEN</span> <span class="dv">1</span> <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span>) <span class="kw">AS</span> count_tied</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> librarian_trade_status_view</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> villager_id</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    villager_id,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> count_protected <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">THEN</span> <span class="st">'keep'</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> count_pending <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">THEN</span> <span class="st">'pending'</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> count_tied <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">THEN</span> <span class="st">'tied'</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">'redundant'</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> villager_status</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> VillagerAgg;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>It is important to create <code>librarian_trade_status_view</code> before <code>librarian_villager_status_view</code> because the latter depends on the former as input.</p>
+</section>
+<section id="joining-both-tables" class="level2">
+<h2 class="anchored" data-anchor-id="joining-both-tables">Joining Both Tables</h2>
+<p>Both of these views provide valuable information on their own that can be used to help determine which librarians to keep or not. Individual enchantment offers can easily be compared using <code>librarian_trade_status_view</code>, while the status of each librarian can be found using <code>librarian_villager_status_view</code>.</p>
+<p>However, joining these views together in a single query can help make even more informed decisions by combing the information from both.</p>
+<p>For example, the following query returns each trade, including the villager status, enchantment details, cost, and trade evaluation:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    v.villager_status,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    t.villager_id,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    t.enchantment,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    t.enchantment_level,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    t.emerald_cost,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    t.trade_evaluation</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> librarian_villager_status_view v</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> librarian_trade_status_view t <span class="kw">ON</span> v.villager_id <span class="op">=</span> t.villager_id</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span> v.villager_status</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> <span class="st">'keep'</span> <span class="cf">THEN</span> <span class="dv">1</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> <span class="st">'tied'</span> <span class="cf">THEN</span> <span class="dv">2</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> <span class="st">'pending'</span> <span class="cf">THEN</span> <span class="dv">3</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> <span class="st">'redundant'</span> <span class="cf">THEN</span> <span class="dv">4</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span>,</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    t.villager_id, </span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    t.enchantment;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Using queries that join both tables like this makes it possible to further investigate which librarians are worth keeping based on the full details of each trade.</p>
+</section>
+<section id="results-and-impact" class="level2">
+<h2 class="anchored" data-anchor-id="results-and-impact">Results and Impact</h2>
+<p>At the time I implemented this villager status system, I had 40 total librarians:</p>
+<ul>
+<li>26 librarians had the <code>keep</code> status</li>
+<li>9 librarians had the <code>tied</code> status</li>
+<li>5 librarians had the <code>redundant</code> status</li>
+<li>0 librarians had the <code>pending</code> status (I cured them all before evaluating)</li>
+</ul>
+<p>In order to decide whether to remove any of the librarians with the <code>tied</code> or <code>redundant</code> status, I investigated further by joining both tables. Before making a final decision, it was important to get a full picture of the situation by finding out not just the status of a villager, but also the details of their trades and how they compare to other trades in the database.</p>
+<p>After careful consideration, I decided to remove 6 librarians in total: 4 with the <code>tied</code> status and 2 with the <code>redundant</code> status.</p>
+<p>The decision to keep the other <code>tied</code> and <code>redundant</code> librarians was based on their specific offers, such as if they offered backups of especially valuable enchantments, like <a href="https://minecraft.wiki/w/Mending" target="_blank" rel="noopener">mending</a> and <a href="https://minecraft.wiki/w/Fortune" target="_blank" rel="noopener">fortune</a>.</p>
+<p>I removed the villagers I decided not to keep from the <code>villagers</code> table:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> villagers</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> villager_id <span class="kw">IN</span> (<span class="st">'sp023'</span>, <span class="st">'sp033'</span>, <span class="st">'sp012'</span>, <span class="st">'sp015'</span>, <span class="st">'sp025'</span>, <span class="st">'sp029'</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Since I used <code>ON DELETE CASCADE</code> for the <code>villager_id</code> foreign key relationships in the trade tables, the corresponding rows in the <code>librarian_trades</code> table were removed automatically.</p>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>The improvements made to this database system build upon the <a href="https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/">previous project</a> to increase the integrity, efficiency, and value of the system, supporting the overall goal of better informed decision-making.</p>
+<p>Here is a summary of the specific improvements made in this project:</p>
+<ul>
+<li><strong>Optimized the existing database schema</strong> for integrity and consistency</li>
+<li><strong>Expanded support</strong> for additional villager professions</li>
+<li><strong>Created a master trades view</strong> to easily view trades across professions</li>
+<li><strong>Developed a CLI tool</strong> to efficiently update existing trades</li>
+<li><strong>Enhanced the ETL pipeline</strong> with change detection to only update the reference tables if necessary</li>
+<li><strong>Implemented a villager status system</strong> to help determine which librarians to keep or not, used to identify 6 low-value librarians to replace</li>
+</ul>
+<section id="more-ideas-for-the-future" class="level2">
+<h2 class="anchored" data-anchor-id="more-ideas-for-the-future">More Ideas for the Future</h2>
+<p>I still have a few more ideas for this project that I’d like to implement in another follow-up.</p>
+<p><a href="https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/#ideas-for-the-future">As mentioned in the previous project</a>, I plan to develop an interactive visual dashboard for this database. This would provide a graphical interface for exploring trades, viewing villagers, and quickly identifying high-value offers.</p>
+<p>I also plan to integrate <code>add_trades.py</code> and <code>update_trades.py</code> into a single CLI tool to easily view, add, and update trades, depending on my needs.</p>
+<p>I’ll also start tracking trades from shepherds whenever I add them to my villager trading hall.</p>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/dylanbretzjr\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright © 2026 Dylan Bretz Jr.</p>
+</div>
+    <div class="nav-footer-right">
+<p>Powered by <a href="https://quarto.org"><iconify-icon role="img" inline="" icon="simple-icons:quarto" aria-label="Quarto Logo" title="Quarto Logo"></iconify-icon> Quarto</a> and <a href="https://docs.github.com/en/pages"><i class="bi bi-github"></i> GitHub Pages</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

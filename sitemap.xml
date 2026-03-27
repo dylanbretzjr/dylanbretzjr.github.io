@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/index.html</loc>
-    <lastmod>2026-03-25T16:22:43.761Z</lastmod>
-  </url>
-  <url>
-    <loc>https://dylanbretzjr.com/projects/index.html</loc>
-    <lastmod>2026-03-25T16:22:43.761Z</lastmod>
-  </url>
-  <url>
-    <loc>https://dylanbretzjr.com/index.html</loc>
-    <lastmod>2026-03-25T16:22:43.760Z</lastmod>
+    <loc>https://dylanbretzjr.com/contact.html</loc>
+    <lastmod>2026-03-27T16:10:16.394Z</lastmod>
   </url>
   <url>
     <loc>https://dylanbretzjr.com/projects/cyclistic-case-study/index.html</loc>
-    <lastmod>2026-03-25T16:22:43.761Z</lastmod>
+    <lastmod>2026-03-27T16:10:16.407Z</lastmod>
   </url>
   <url>
-    <loc>https://dylanbretzjr.com/contact.html</loc>
-    <lastmod>2026-03-25T16:22:43.748Z</lastmod>
+    <loc>https://dylanbretzjr.com/projects/minecraft-trading-database-implementation/index.html</loc>
+    <lastmod>2026-03-27T16:10:16.407Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dylanbretzjr.com/projects/index.html</loc>
+    <lastmod>2026-03-27T16:10:16.407Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dylanbretzjr.com/projects/minecraft-trading-database-expansion/index.html</loc>
+    <lastmod>2026-03-27T16:10:16.407Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dylanbretzjr.com/index.html</loc>
+    <lastmod>2026-03-27T16:10:16.405Z</lastmod>
   </url>
 </urlset>
